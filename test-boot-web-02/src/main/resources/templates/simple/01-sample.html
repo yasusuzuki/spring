@@ -1,0 +1,29 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Good Thymes Virtual Grocery</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" media="all"  th:href="@{/css/Site.css}" />
+</head>
+<body>
+
+<h1>Thymeleafのサンプル</h1>
+<p th:text="${@groovyBean.name +'様'}">Header</p>
+
+<table class="DataTable">
+  <thead>
+    <tr>
+      <th th:text="#{msgs.headers.name}">Name</th>
+      <th th:text="#{msgs.headers.price}">Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr th:each="prod: ${allProducts}">
+       <td th:text="${prod.name}">Oranges</td>
+       <td th:text="${prod.name}">Oranges</td>     
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>

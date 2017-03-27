@@ -1,0 +1,404 @@
+
+
+body{
+  font-family: Roboto, verdana, Tahoma, arial, helvetica, sans-serif;
+  color:#000000;
+  font-size:12px;
+}
+
+#page-title {
+	text-align:center;
+	position:center;
+	color: black;
+	font-size:34px;
+	font-weight: 300; 
+	letter-spacing: 1px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-bottom: 6px;
+	padding-left: 0px;
+	letter-spacing: -0.01em;
+	line-height: 1.3;
+
+}
+
+
+h1 {
+  color: black;
+  font-size:34px;
+  font-weight: 300; 
+  letter-spacing: 1px;
+  padding-top: 0px;
+  padding-right: 0px;
+  padding-bottom: 6px;
+  padding-left: 0px;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    margin: 36px 0px 24px;
+
+}
+
+h1:after {
+	background: none repeat scroll 0% 0% #DDD;
+	border: 0px none;
+	content: "";
+	display: block;
+	margin: 6px 0px 20px;
+	height: 1px;
+	overflow: auto;
+}
+
+h2 {
+  color: #700;
+  font-size:26px;
+  font-weight: normal;
+  letter-spacing: 0px;
+}
+
+h3 {
+  color:black;
+  font-size:14px;
+  font-weight: normal;
+  text-decoration:none;
+  letter-spacing: 0px;
+}
+
+h4 {
+  letter-spacing: 0px;
+}
+
+td a, td a:link, td a:active, td a:hover, td a:visited {
+  color:#500000;
+  text-decoration: underline;
+}
+
+
+/* Data Table Styles */
+
+.DataTable {
+  letter-spacing: 0px;
+  font-size: 11px;
+
+  border: 1px solid #666666;
+  border-collapse: collapse;
+  border-spacing: 0px;
+}
+
+
+.DataTable tr {
+  background-color: #FAFAFA;
+}
+.DataTable tr.red {
+  background-color: #F3EEE7;
+}
+.DataTable tr.grey {
+  background-color: #E0E0E0;
+}
+.DataTable tr:hover > td {
+  background-color: #FBFACE;
+}
+.DataTable tr.nohover > td {
+  background-color: #FAFAFA;
+}
+
+
+.DataTable tr th {
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+/*  background-color: #BEC8D1; */
+  background-color: #DCE1E5;
+/*  background-image:url('/css/th_bkg.jpg'); */
+  background-repeat:repeat-x;
+  background-position: bottom;
+
+  color: #303030;
+
+  border: 1px solid #666666;
+  border-collapse: collapse;
+  padding-top: 2px;
+  padding-right: 4px;
+  padding-bottom: 2px;
+  padding-left: 4px;
+}
+.DataTable tr th.red {
+  background-color: #F38C4D;
+}
+.DataTable tr th.center {
+  text-align: center;
+}
+.DataTable tr th.right {
+  text-align: right;
+}
+
+
+.DataTable tr td {
+  text-align: left;
+  font-weight: normal;
+  white-space: nowrap;
+  vertical-align: top;
+  color: #303030;
+
+  border: 1px solid #666666;
+  border-collapse: collapse;
+  padding-top: 1px;
+  padding-right: 4px;
+  padding-bottom: 1px;
+  padding-left: 4px;
+}
+.DataTable tr td.center {
+  text-align: center;
+}
+.DataTable tr td.right {
+  text-align: right;
+}
+.DataTable tr td.red {
+  background-color: #F3EEE7;
+}
+.DataTable tr td.grey {
+  background-color: #E0E0E0;
+}
+.DataTable tr td.wrap {
+  white-space: normal;
+}
+
+
+
+.NULL {
+  color: #B0B0B0;
+}
+
+
+/* Style for Event Code Table */
+
+.EvntCode {
+  font-size: 11px;
+  border: 1px solid #666666;
+  border-collapse: collapse;
+  border-spacing: 0px;
+}
+.EvntCode tr {
+  line-height: 125%;
+  background-color: #F3EEE7;
+}
+.EvntCode tr td {
+  text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
+  font-weight: normal;
+  color: #303030;
+
+  border: 1px solid #666666;
+  border-collapse: collapse;
+  padding-top: 1px;
+  padding-right: 4px;
+  padding-bottom: 1px;
+  padding-left: 4px;
+}
+
+.EvntCode tr td a,
+.EvntCode tr td a:link,
+.EvntCode tr td a:active,
+.EvntCode tr td a:visited {
+  text-decoration: none;
+  font-size: 11px;
+  color: #303030;
+}
+
+.EvntCode tr td a:hover {
+  text-decoration: none;
+  color: red;
+}
+
+
+/* Style for Process Code Table */
+
+.ProcCode {
+  font-weight: normal;
+  font-size: 12px;
+
+  border: 1px solid #666666;
+  border-collapse: collapse;
+  border-spacing: 0px;
+}
+
+.ProcCode tr {
+  line-height: 125%;
+}
+
+.ProcCode tr th {
+  text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
+  color: #303030;
+  background-color: #B3CEB7;
+
+  border: 1px solid #666666;
+  border-collapse: collapse;
+  padding-top: 1px;
+  padding-right: 4px;
+  padding-bottom: 1px;
+  padding-left: 4px;
+}
+.ProcCode tr td {
+  text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
+  color: #303030;
+  background-color: #F3EEE7;
+
+  border: 1px solid #666666;
+  border-collapse: collapse;
+  padding-top: 1px;
+  padding-right: 4px;
+  padding-bottom: 1px;
+  padding-left: 4px;
+}
+
+
+.ProcCode tr td a,
+.ProcCode tr td a:link,
+.ProcCode tr td a:active,
+.ProcCode tr td a:visited {
+  text-decoration: none;
+  font-size: 11px;
+  color: #303030;
+}
+
+.ProcCode tr td a:hover {
+  text-decoration: none;
+  color: red;
+}
+
+
+/* Input Form Related */
+
+input, select {
+  font-size:12px;
+  color:#000000;
+  vertical-align: top;
+}
+
+input:focus {
+  border: 1px solid brown;
+  background-color: #e8e8e8;
+}
+input[type=checkbox], input[type=radio] {
+  vertical-align: middle;
+}
+
+.texta {
+  font-size:12px;
+  background-color: #fafafa;
+  border: 1px solid #666666;
+}
+textarea:focus {
+  border: 1px solid brown;
+}
+
+.mttext {
+  font-size:10px;
+  border: 1px solid #666666;
+  background-color: #fafafa;
+}
+
+/*
+.button, .button:focus {
+  border: 2px solid #303030;
+  border-color: #601010;
+  background-color: #f0f0f0;
+  margin-top: 4px;
+  padding: 1px 4px 1px 4px;
+  vertical-align: middle;
+}
+.button:hover {
+  border-color: #B03030;
+  background-color: #e0e0e0;
+}
+*/
+
+.button {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #666;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+    font-family: "Arial",sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    height: 27px;
+    line-height: 27px;
+    min-width: 54px;
+    padding: 0px 8px;
+    text-align: center;
+    text-decoration: none !important;
+    border-radius: 2px;
+    background: -moz-linear-gradient(center top , #F5F5F5, #F1F1F1) repeat scroll 0% 0% transparent;
+    transition: all 0s ease 0s, all 0.218s ease 0s;
+    box-sizing: content-box;
+}
+
+.getbutton, .getbutton:focus {
+  border: 2px solid #303030;
+  border-color: #B03030;
+  background-color: #f0f0f0;
+  margin-top: 4px;
+  padding: 1px 4px 1px 4px;
+  vertical-align: middle;
+}
+.getbutton:hover {
+  border-color: #E03F3F;
+  background-color: #e0e0e0;
+}
+
+
+/*  Misc  */
+
+.UserID {
+  text-decoration: none;
+  font-size: 6pt;
+}
+
+.wikiParseError {
+  color: red;
+}
+.wikiParseError:before {
+  content: url(/wiki/image/bad_mark_small.gif);
+}
+
+.RunError {
+  color: red;
+}
+.RunError:before {
+  content: url(/wiki/image/bad_mark_small.gif);
+}
+
+#top-bar {
+    border-bottom: 1px solid #EBEBEB;
+    line-height: 24px;
+    overflow: hidden;
+    position: relative;
+    margin: auto;
+    max-width: 1500px;
+	margin-top: 36px;
+}
+
+#side-bar {
+    width: 248px;
+    margin-right: -248px;
+	float: left;
+}
+
+
+#main-panel {
+	vertical-align: top;
+	margin-left: 264px;
+	max-width: 952px;
+}
+
+#wiki-edit-panel {
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	background: #F5F5F5;
+}
+
