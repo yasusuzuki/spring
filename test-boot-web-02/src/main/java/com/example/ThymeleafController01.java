@@ -1,12 +1,9 @@
 package com.example;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
- import org.slf4j.Logger;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -28,13 +25,14 @@ import com.example.form.SimpleForm;
 @EnableAutoConfiguration
 public class ThymeleafController01 {
 	  final static Logger logger = LoggerFactory.getLogger(ThymeleafController01.class);
-
 	  /**
 	   * selectの表示に使用するアイテム
 	   */
 	  final static Map<String, String> SELECT_ITEMS =
 	    Collections.unmodifiableMap(new LinkedHashMap<String, String>() {
-	    {
+
+
+		{
 	      put("select_A", "A");
 	      put("select_B", "B");
 	      put("select_C", "C");

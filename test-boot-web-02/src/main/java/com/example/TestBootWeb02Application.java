@@ -13,11 +13,11 @@ public class TestBootWeb02Application {
 		ConfigurableApplicationContext ctx = SpringApplication.run(TestBootWeb02Application.class, args);
         String[] beanNames = ctx.getBeanDefinitionNames();
         Arrays.sort(beanNames);
-/*        for (String beanName : beanNames) {
-        	if ( beanName.toLowerCase().contains("groovy")){
+        for (String beanName : beanNames) {
+        	if ( beanName.toLowerCase().contains("bean")){
         		System.out.println(beanName);
         	}
-        }*/
+        }
         //GroovyBean bean = (GroovyBean)ctx.getBean("groovyBean");
         //System.out.println(bean.getName());
 	}

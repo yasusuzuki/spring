@@ -1,14 +1,7 @@
 package com.example;
 
-import com.example.form.KeyValueForm;
-import com.example.form.SimpleForm;
-import com.example.model.TinyProduct;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -19,6 +12,9 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.example.form.SimpleForm;
+import com.example.model.TinyProduct;
 
 @Controller
 @EnableAutoConfiguration
