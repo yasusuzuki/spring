@@ -34,5 +34,5 @@ test-boot-web-04
 <div th:utext="${@inputFieldBean.html('contractStartDate','保険始期日','2017/4/1')}">Header</div>
 <div th:utext="${@inputFieldBean.html('productCode','商品コード','THEカラダ')}">Header</div>
 ↓
-
+@inputFieldBean.html()がインプットフィールドのHTMLを出力してくれるが、そのあとフォーム内のタグを処理してくれないのでThymeleafのタグがそのまま表示されてしまうことになり、うまくJavaベースのコントローラ内のオブジェクトにバインドしてくれない。
 ```
