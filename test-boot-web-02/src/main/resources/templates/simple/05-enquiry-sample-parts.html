@@ -1,0 +1,33 @@
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>照会系画面　－　Groovyの例</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" ></meta>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"
+        th:src="@{/webjars/jquery/3.1.1/jquery.min.js}"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.css" 
+        th:href="@{/webjars/Semantic-UI/2.2.9/semantic.min.css}" 
+        rel="stylesheet" type="text/css" ></link>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.js" 
+        th:src="@{/webjars/Semantic-UI/2.2.9/semantic.min.js}"></script> 
+</head>
+<body>
+
+<div th:fragment="my_text_field(field_name,field_id,place_holder)">
+  <div class="ui labeled input"><div class="ui label" th:text="${field_name}">Field Name</div>
+    <input type="text" th:field="*{myMap[__${field_id}__]}"  th:placeholder="${place_holder}"></input>
+  </div>
+</div>
+
+<div th:fragment="my_dropdown_field(field_name,field_id,option_list)">
+  <div class="ui selection dropdown">
+  <input type="hidden"  th:field="*{myMap[productCategory]}"></input>
+  <i class="dropdown icon"></i>
+  <div class="default text"></div>
+  <div class="menu">
+    <div class="item"  th:each="row : ${option_list}" th:value="${row.key}" th:text="${row.value}">火災</div>
+  </div>
+  </div>
+</div>
+</body>
+</html>
