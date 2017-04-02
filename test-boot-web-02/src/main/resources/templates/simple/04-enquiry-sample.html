@@ -47,7 +47,7 @@
 <div class="ui fixed menu">
   <div class="menu">
     <div id="js-sidebar" class="item"><i class="icon large grey content"></i></div>
-    <h1>照会系画面のサンプル</h1>
+    <h1>照会系画面のサンプル (＊注意：このサンプルは動きません)</h1>
   </div>
 </div>
 
@@ -62,9 +62,10 @@
 
 <div class="ui three column grid">
 <div class="column">
+<!-- メソッド呼び出しで、タグを作成してもうまくいかない -->
 <div th:utext="${@inputFieldBean.html('policyNo','証券番号','SK0000001')}">Header</div>
-<div th:utext="${@inputFieldBean.html('customerName','契約者氏名ｶﾅ','損保太郎')}">Header</div>
-<div th:utext="${@inputFieldBean.html('customerAddress','契約者住所ｶﾅ ','東京都％')}">Header</div>
+<div th:utext="${@inputFieldBean.html('contractorName','契約者氏名ｶﾅ','損保太郎')}">Header</div>
+<div th:utext="${@inputFieldBean.html('contractorAddress','契約者住所ｶﾅ ','東京都％')}">Header</div>
 </div>
 <div class="column">
 <div th:utext="${@inputFieldBean.html('contractStartDate','保険始期日','2017/4/1')}">Header</div>
@@ -95,32 +96,19 @@
 </form>
 
 <hr></hr>
-<table class="ui celled table compact collapsing">
+<table class="ui celled table compact collapsing" th:if="${contracts} ? ${contracts.size()} >0 : #{false}">
   <thead>
-    <tr>
-      <th th:text="#{msgs.headers.policy_no}" >証券番号</th>
-      <th th:text="#{msgs.headers.customer_name}" >契約者氏名</th>
-      <th th:text="#{msgs.headers.customer_address}" >契約者住所</th>
-      <th th:text="#{msgs.headers.contract_start_date}" >保険始期日</th>
-      <th th:text="#{msgs.headers.product_code}" >商品コード</th>
-      <th th:text="#{msgs.headers.product_category}" >種目</th>
-      <th th:text="#{msgs.headers.price}" >種目</th>
-      
+    <tr>   
+      <th th:each="row: ${contracts[0].entrySet()}" th:text="#{msgs.headers.__${row.key.toLowerCase()}__}" >証券番号</th>
     </tr>
   </thead>
   <tbody>
-    <tr th:each="prod: ${allProducts}">
-      <th th:text="${prod.policyNo}" >証券番号</th>
-      <th th:text="${prod.customerName}" >契約者氏名</th>
-      <th th:text="${prod.customerAddress}" >契約者住所</th>
-      <th th:text="${prod.contractStartDate}" >保険始期日</th>
-      <th th:text="${prod.productCode}" >商品コード</th>
-      <th th:text="${prod.productCategory}" >種目</th>   
-      <th th:text="${prod.price}" >保険料</th>         
+    <tr th:each="row: ${contracts}" >
+      <td th:each="f : ${row}" th:text="${f.value}">XXX</td>
             
     </tr>
   </tbody>
-</table>
+</table>	
 </div>
 </div>
 </body>

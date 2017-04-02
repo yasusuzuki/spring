@@ -14,9 +14,9 @@ public class SimpleForm {
 	private String policyNo;
 
 	@Pattern(regexp = "")
-	private String customerName;
+	private String contractorName;
 
-	private String customerAddress;
+	private String contractorAddress;
 
 	@DateTimeFormat(pattern = "yyyy/MM/dd")
 	private String contractStartDate;
@@ -27,6 +27,10 @@ public class SimpleForm {
 	private String productCategory;
 
 
+
+
+
+
 	public String getPolicyNo() {
 		return policyNo;
 	}
@@ -35,20 +39,20 @@ public class SimpleForm {
 		this.policyNo = policyNo;
 	}
 
-	public String getCustomerName() {
-		return customerName;
+	public String getContractorName() {
+		return contractorName;
 	}
 
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
+	public void setContractorName(String contractorName) {
+		this.contractorName = contractorName;
 	}
 
-	public String getCustomerAddress() {
-		return customerAddress;
+	public String getContractorAddress() {
+		return contractorAddress;
 	}
 
-	public void setCustomerAddress(String customerAddress) {
-		this.customerAddress = customerAddress;
+	public void setContractorAddress(String contractorAddress) {
+		this.contractorAddress = contractorAddress;
 	}
 
 	public String getContractStartDate() {
@@ -75,8 +79,6 @@ public class SimpleForm {
 		this.productCategory = productCategory;
 	}
 
-
-
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
@@ -95,7 +97,7 @@ public class SimpleForm {
 		return "SimpleForm "
 		+ " policy no:" + getPolicyNo() 
 		+ " contract start date: " + getContractStartDate()
-		+ " customer address: " + getCustomerAddress()
+		+ " customer address: " + getContractorAddress()
 		+ " product category: " + getProductCategory()
 		+ " product code: " + getProductCode();
 	}

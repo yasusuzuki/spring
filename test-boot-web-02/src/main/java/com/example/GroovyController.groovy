@@ -1,129 +1,150 @@
 package com.example;
 
+import java.util.Arrays
+import java.util.List
+
 import org.codehaus.groovy.ant.FileScanner
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.*;
+import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest
+import org.thymeleaf.standard.expression.Each
+
+import com.example.model.TinyProduct
+import com.fasterxml.jackson.core.sym.Name
+
+import groovy.transform.TupleConstructor
 import groovy.util.AntBuilder;
 
-class InputField {
-	String name = "";
-	String type = "";
-	String toString(){
-		"<input type='text'/>"
+import org.codehaus.groovy.runtime.StringGroovyMethods
 
-	}
-} 
 
 class DataTable {
-	String sql
-	String render(){
-		String html = """
-		<table cellspacing=0 class='DataTable'>
-		"""
+	JdbcTemplate jdbc;
+	Closure cl;
+
+	String render(String sql){
+		List<Map<String,Object>> result = jdbc.queryForList(sql)
+		println "DATATABLE: ${sql}"
+		
+		if ( result.size() == 0 ) return "" 
+	
+		String html = """<table class="ui celled table compact collapsing">"""
 		html += "<tr>"
-		for ( int i=0; i<10; i++ ) {
-			html += "<th>"
-			html += "aa"
-			html += "</th>"
-		}
+		result[0].each { html += "<th>" + it.key + "</th>" }  
 		html += "</tr>"
-		
-		
-		for ( int i=0; i<10; i++ ) {
+
+		for ( row in result ) {
+			if ( cl != null && ! cl(row.POLICY_NO, "POLICY_NO") ) continue;
 			html += "<tr>"
-			for ( int j=0; j<10; j++ ) {
-				html += "<td>"
-				html += "aa"
-				html += "</td>"
-			}
+			row.each{html += "<td>" + it.value + "</td>"} 
 			html += "</tr>"
 		}
 		html += "</table>"
 		return html
 	}
-		
-	
-}
-
-@Component
-class GroovyBean {
-	String name = "aa";
-	BigDecimal price;
 }
 
 
-@RestController
+@Controller
 class GroovyController {
-	def inputField = new InputField(name:"aa", type:"bb")
-	def dataTable = new DataTable();
-    @RequestMapping("/groovy-01")
-    @ResponseBody
-	def top() {
-		return frameset
-	}
-	@RequestMapping("/groovy-01/menu")
+	@Autowired
+	JdbcTemplate jdbc;
+	DataTable dataTable
+	def menu = new GroovyMenu();
+	def header = new GroovyHeader();
+	def request = null;
+
+	@RequestMapping(value = "/groovy-01", method = RequestMethod.GET)
 	@ResponseBody
-	def menu() {
-		return menu
-	}
-	@RequestMapping("/groovy-01/body")
-	@ResponseBody
-	def body() {
+	def html(WebRequest request) {
+//		dataTable = new DataTable(jdbc,null)
+		dataTable = new DataTable(jdbc:jdbc)
+		this.request = request
 		return body
 	}
-
-
-def frameset ='''
-<html>
-<body>
-
-<table>
-<tr><td width="10%" height="100%">
-<iframe src="./groovy-01/menu" width="100%" height="100%" frameborder=0 scrolling=no></iframe>
-</td>
-<td width="90%" height="100%">
-<iframe src="./groovy-01/body" width="100%" height="100px" frameborder=0 scrolling=no/>
-</td></tr></table>
-
-</body>
-</html>
-'''
-
-def menu='''
-<p>1</p>
-<p>2</p>
-
-'''
-
-def clos = {"abdddddcdee"}
-
+	
+	@RequestMapping(value = "/groovy-01", method = RequestMethod.POST)
+	@ResponseBody
+	def post(WebRequest request, ModelMap map) {
+		println "============================"
+		
+		request.getParameterMap().each{println it.value + "=" + request.getParameter(it.key)}
+		
+		Closure cl = { targetValue,searchKey -> targetValue =~ request.getParameter(searchKey) }
+//		dataTable = new DataTable(jdbc, cl)
+		this.request = request
+		dataTable = new DataTable(jdbc:jdbc, cl:cl)
+		return body
+	}				
+	
+	def inputFieldMap = [
+		POLICY_NO: new InputTextField('証券番号','POLICY_NO','SK001'),
+		CONTRACTOR_NAME: new InputTextField('契約者氏名ｶﾅ ','CONTRACTOR_NAME','損保太郎'),
+		CONTRACTOR_ADDRESS: new InputTextField('契約者住所ｶﾅ ','CONTRACTOR_ADDRESS','東京都'),
+		CONTRACT_START_DATE: new InputTextField('保険始期日','CONTRACT_START_DATE','2017/4/1'),
+		PRODUCT_CODE: new InputTextField('商品コード','PRODUCT_CODE','THEカラダ'),
+		PRODUCT_CATEGORY: new InputDropdownField('種目','PRODUCT_CATEGORY',[1:'傷害',2:'自動車',3:'火災'])
+	]
+	
 def body = """
 <html>
-<head>
-<link rel="stylesheet" type="text/css" href="/css/Site.css"/>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.6/semantic.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.6/semantic.min.css"  />
-
-</head>
+${header.render()}
 <body>
+${menu.render()}
 
-<form>
-<p>INPUT:${inputField.toString()}</p>
-<input type="submit"/>
-		<p>${clos.call()}</a>
+<!--*********************************************
+**             上部ナビゲーションメニュー                                     
+************************************************* -->
 
+<div class="ui fixed menu">
+  <div class="menu">
+    <div id="js-sidebar" class="item"><i class="icon large grey content"></i></div>
+    <h1>照会系画面のサンプル</h1>
+  </div>
+</div>
+
+
+<!--*********************************************
+**            メインのコンテンツ                                                           
+************************************************* -->
+<div class="pusher">
+<div class=" ui fluid container">
+
+<form method="post">
+<div class="ui three column grid">
+  <div class="column">
+    ${inputFieldMap.POLICY_NO}
+	${inputFieldMap.CONTRACTOR_NAME}
+	${inputFieldMap.CONTRACTOR_ADDRESS}
+  </div>
+  <div class="column">
+    ${inputFieldMap.CONTRACT_START_DATE}
+	${inputFieldMap.PRODUCT_CODE}
+	${inputFieldMap.PRODUCT_CATEGORY}
+  </div>
+  
+  <div class="column"></div>
+</div>
+
+<p></p>
+<!-- ***************************************** 
+** ボタン
+********************************************** -->
+<button class="ui primary button">検索</button>
+<button class="ui button">リセット</button>
 </form>
-<hr size=1 noshade/>
+
+<hr></hr>
 
 <h2> Data Table </h2>
-${dataTable.render()}
-
-<h2> Test </h2>
-<input type="textarea" height="100" width="50"/>
-
+${-> dataTable.render("select * from contract where 1=1")}
+</div>
+</div>
 </body>
 </html>
 """

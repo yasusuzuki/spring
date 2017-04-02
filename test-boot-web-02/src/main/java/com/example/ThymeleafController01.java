@@ -21,8 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.example.form.SimpleForm;
 
 @Controller
-
-@EnableAutoConfiguration
 public class ThymeleafController01 {
 	  final static Logger logger = LoggerFactory.getLogger(ThymeleafController01.class);
 	  /**
