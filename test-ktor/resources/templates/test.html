@@ -1,0 +1,23 @@
+<!DOCTYPE html >
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<ul>
+    <li th:each="user : ${users}" th:text="${user.id + ':' + user.name}"></li>
+</ul>
+
+
+<h1 th:text="${title}"></h1>
+<!-- here doc -->
+<p th:text="'SELECT *
+  FROM hokenkeiyaku ' +
+    ${username}"></p>
+
+<!-- Spring Bean can call method -->
+<p th:text="|SELECT *  FROM hokenkeiyaku  ${username}|"></p>
+
+</body>
+</html>
