@@ -1,9 +1,11 @@
 @echo off
-@rem Mavenã‚’å®Ÿè¡Œã™ã‚‹ã¨é…ã„ã®ã§ã€ç°¡å˜ã«ãŠè©¦ã—å®Ÿè¡Œã™ã‚‹ãƒãƒƒãƒã‚¹ã‚¯ãƒªãƒ—ãƒˆ
-@rem mvn dependency:build-classpathã§å‡ºåŠ›ã—ãŸã‚¯ãƒ©ã‚¹ãƒ‘ã‚¹ä¸€è¦§ã‚’ã™ã¹ã¦è¨­å®šã—ã¦å®Ÿè¡Œã™ã‚‹
-@rem ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ™‚ã«ãƒ‘ã‚¹ã‚’é€šã™ã¨kotlinã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ãŒã‚¨ãƒ©ãƒ¼ã«ã—ã¦ã—ã¾ã†ã‚‚ã®ãŒã‚ã‚‹ã®ã§
-@rem ãƒ©ãƒ³ã‚¿ã‚¤ãƒ å°‚ç”¨ã¨ãã‚Œä»¥å¤–ã§åˆ†ã‘ã¦ã„ã‚‹
-@rem ã¡ãªã¿ã«ã€ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ™‚ã«ä¸è¦ãªã‚¯ãƒ©ã‚¹ãƒ‘ã‚¹ã‚’é€šã—ã¦ã‚‚ã€é€šã•ãªãã¦ã‚‚ã‚ã¾ã‚Šã‚³ãƒ³ãƒ‘ã‚¤ãƒ«å®Ÿè¡Œé€Ÿåº¦ã¯å¤‰ã‚ã‚‰ãªã‹ã£ãŸ
+
+@rem Maven‚ğÀs‚·‚é‚Æ’x‚¢‚Ì‚ÅAŠÈ’P‚É‚¨‚µÀs‚·‚éƒoƒbƒ`ƒXƒNƒŠƒvƒg
+@rem mvn dependency:build-classpath‚Åo—Í‚µ‚½ƒNƒ‰ƒXƒpƒXˆê——‚ğ‚·‚×‚Äİ’è‚µ‚ÄÀs‚·‚é
+@rem ƒRƒ“ƒpƒCƒ‹‚ÉƒpƒX‚ğ’Ê‚·‚ÆkotlinƒRƒ“ƒpƒCƒ‰‚ªƒGƒ‰[‚É‚µ‚Ä‚µ‚Ü‚¤‚à‚Ì‚ª‚ ‚é‚Ì‚Å
+@rem ƒ‰ƒ“ƒ^ƒCƒ€ê—p‚Æ‚»‚êˆÈŠO‚Å•ª‚¯‚Ä‚¢‚é
+@rem ‚¿‚È‚İ‚ÉAƒRƒ“ƒpƒCƒ‹‚É•s—v‚ÈƒNƒ‰ƒXƒpƒX‚ğ’Ê‚µ‚Ä‚àA’Ê‚³‚È‚­‚Ä‚à‚ ‚Ü‚èƒRƒ“ƒpƒCƒ‹Às‘¬“x‚Í•Ï‚í‚ç‚È‚©‚Á‚½
+
 
 @rem required in compile time
 SET RUNTIME_CLASSPATH=
@@ -89,20 +91,18 @@ SET CLASSPATH=%CLASSPATH%;C:\java\m2repo\org\jetbrains\kotlin\kotlin-test-common
 SET CLASSPATH=%CLASSPATH%;C:\java\m2repo\org\jetbrains\kotlin\kotlin-test-annotations-common\1.5.0\kotlin-test-annotations-common-1.5.0.jar;
 SET CLASSPATH=%CLASSPATH%;C:\java\m2repo\junit\junit\4.13.1\junit-4.13.1.jar;
 SET CLASSPATH=%CLASSPATH%;C:\java\m2repo\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;
-SET CLASSPATH=%CLASSPATH%;.\target\classes;
+SET CLASSPATH=%CLASSPATH%;.\target\kotlin-ic\test\classes;
+SET CLASSPATH=%CLASSPATH%;.\target\kotlin-ic\compile\classes;
 
-@rem let mockit spy finalized class.
-@rem echo "mock-maker-inline" > mockito-extensions\org.mockito.plugins.MockMaker
-
-@rem requires -cp spcifically, as kotlinc doesn't read classpath
-
-echo "kotlinc compiling.."
+@rem "call"‚ğg—p‚µ‚È‚¢‚ÆAkotlinc‚ÌÀsŒã‚É‚±‚ÌDOSƒoƒbƒ`‚ÌÀs‚ª~‚Ü‚Á‚Ä‚µ‚Ü‚¤B
 if "%1" == "compile" ( 
-  kotlinc -classpath "%CLASSPATH%" test\TestApplication.kt  -d target\classes
+  echo "kotlinc compiling.."
+  call kotlinc -classpath "%CLASSPATH%" test\TestMain.kt  -d target\kotlin-ic\test\classes
   echo "DONE compile"
 )
 
-echo "running jUnit.. ====================================================="
-java -classpath "%CLASSPATH%;%RUNTIME_CLASSPATH%"  org.junit.runner.JUnitCore MessengerTest
+@rem ÅŒã‚Ìƒpƒ‰ƒ[ƒ^‚Å‹ï‘Ì“I‚É‚µ‚½‚¢ƒeƒXƒgƒNƒ‰ƒX‚ğw’è‚·‚é
+echo "running jUnit.. "
+java -classpath "%CLASSPATH%;%RUNTIME_CLASSPATH%"  org.junit.runner.JUnitCore TestMain
 
 

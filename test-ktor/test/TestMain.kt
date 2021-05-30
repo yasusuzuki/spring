@@ -34,9 +34,9 @@ class TestMain :KoinTest {
     }
 
     /**
-     * Initialize Mock Provider. Mock can be defined in 2 ways
-     *   1. declareMock<..>{ }
-     *   2. 
+     * Initialize Mock Provider. The Provider can produce modules in 2 ways
+     *   1. declareMock<..>{ } --- declare & instantiate module
+     *   2. declare{  } --- declare only. you need get<ComponentX>() to retrieve component from container
      */
     @get:Rule
     val mockProvider = MockProviderRule.create { clazz ->
@@ -44,15 +44,20 @@ class TestMain :KoinTest {
     }
 
     @Test
-    fun getMessage() {
+    fun testConnection() {
         //declare inserting mock into Database class
         declareMock<Database> {
-            given(connect()).will({println("Mock OK")})
+            given(connect()).will({println("Mock Database class execute connect() --- OK")})
         }
-
         var result = "Hello world"
         assertEquals("Hello world", result)
         db.connect()
+    }
+
+    @Test
+    fun `TEST コンバータのテスト`() {
+        println("This is converter test")
+        assertEquals(true, true)
     }
 
 }

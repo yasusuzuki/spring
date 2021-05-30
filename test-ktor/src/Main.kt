@@ -47,6 +47,7 @@ fun Application.module(testing: Boolean = false) {
             call.respond(ThymeleafContent("test",mapOf("param1" to "xxx")))            
         }
         get("/keiyakuList") {
+            //TODO: HTTP Requestパラメータをデシリアライズする。
             //val req = call.receive<KeiyakuList.Request>()
             call.respond(keiyakuList.processRequest())
         }
@@ -64,7 +65,7 @@ fun Application.module(testing: Boolean = false) {
             files("static") 
         }
     }
-    println("Starting v2")
+    println("Starting v3")
     val path = System.getProperty("user.dir")
 
     println("Working Directory = $path")
