@@ -1,0 +1,5 @@
+target/
+application_PROD.yml
+data/
+.settings/
+

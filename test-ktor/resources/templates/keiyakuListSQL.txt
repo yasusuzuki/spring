@@ -1,0 +1,8 @@
+SELECT a.*
+FROM TANNPO a
+WHERE 1 = 1
+[# th:if=${req.id}]  AND a.id	 LIKE '%[[${req.id}]]%' [/]
+[# th:if=${req.keiyakushaName}]           [/]
+[# th:if=${req.keiyakuType}]        [/]
+ORDER BY a.SHOUKEN_ID DESC
+[# th:if=${req.maxFetchRows}] FETCH FIRST  [[${req.maxFetchRows}]] ROWS ONLY[/]

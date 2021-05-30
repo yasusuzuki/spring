@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" th:content="${appName}">
+    <title th:text="${appName}"></title>
+    <!-- Thymelef のtemplateファイルでは相対パス指定しないと動作しないので注意 -->
+    <!-- ×　th:src="@{/js/script.js}" -->
+    <!-- 〇 th:src="@{js/script.js}" -->
+    <link th:href="@{static/Site.css}" rel="styleSheet">
+    <script type="text/javascript" th:src="@{static/script.js}"></script>
+</head>
+
+<body>
+<h1> 契約一覧</h1>
+
+<FORM NAME='QFORM' METHOD='GET' ACTION='/keiyakuList'>
+    <TABLE CLASS='QueryForm'>
+        <TR>
+            <TD>契約番号(*)：</TD>
+            <TD><input type="text" id="id" name="id" th:value="${req.id}"></TD>
+            <TD>契約者名(*):</TD>
+            <TD ><input type="text" id="keiyakushaName" name="keiyakushaName" th:value="${req.keiyakushaName}"></TD>
+            <TD>MAX:</TD>
+            <TD><input type="number" id="maxFetchRows" name="maxFetchRows" th:value="${req.maxFetchRows}"></TD>
+        </TR>
+        <TR>
+            <TD>契約タイプ：</TD>
+            <TD><select id="keiyakuType" name="keiyakuType" th:value="${req.keiyakuType}">
+                <option th:value="''" th:text="'全部'"     th:selected="${req.keiyakuType == ''}" ></option>
+                <option th:value="'71'" th:text="'株'" th:selected="${req.keiyakuType == '71'}" ></option>
+                <option th:value="'72'" th:text="'債権'"   th:selected="${req.keiyakuType == '72'}" ></option>
+            </select></TD>
+            <TD>DB：</TD>
+            <TD><select id="environment" name="environment" th:value="${req.environment}">
+                <option th:each="item : ${environmentList}" th:value="${item}" th:text="${item}"></option>
+                </select>
+                <font color='lightgrey'>(config.json内のDBConnection.ENVより)</font></TD>
+        </TR>
+    </TABLE>
+    <INPUT TYPE='SUBMIT' VALUE='GET' CLASS='getbutton'>
+</FORM>
+<PRE th:text="${SQL}"></PRE>
+<HR SIZE=1 NOSHADE>
+<FORM NAME='DFORM' METHOD='GET' ACTION='DUMMY'>
+    <h3>・契約一覧</h3>
+    <div th:utext="${dataTable}"></div>
+</FORM>
+</body>
+</html>
+

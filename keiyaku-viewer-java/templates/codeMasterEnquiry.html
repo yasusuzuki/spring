@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang=ja>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="web-keiyaku-viewer_v1.0">
+    <title>web-keiyaku-viewer_v1.0</title>
+    <link th:href="@{/css/Site.css}" rel="styleSheet">
+    <script type="text/javascript" th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+    <h1> コードマスタ </h1>
+    <FORM NAME='QFORM' METHOD='GET' ACTION='/codeMasterEnquiry'>
+        <TABLE CLASS='QueryForm'>
+            <TR>
+                <TD>ドメイン(*)：</TD>
+                <TD><input type="text" id="domain" name="domain" th:value="${req.domain}"></TD>
+                <TD>コード値:</TD>
+                <TD><input type="text" id="codeValue" name="codeValue" th:value="${req.codeValue}"></TD>
+            </TR>
+            <TR>
+                <TD>コード名称(*):</TD>
+                <TD><input type="text" id="codeName" name="codeName" th:value="${req.codeName}"></TD>
+                <TD>MAX:</TD>
+                <TD><input type="number" id="maxFetchRows" name="maxFetchRows" th:value="${req.maxFetchRows}"></TD>
+            </TR>
+        </TABLE>
+        <INPUT TYPE='SUBMIT' VALUE='GET' CLASS='getbutton'>
+    </FORM>
+    <HR SIZE=1 NOSHADE>
+    <A HREF='/keiyakuList' CLASS='button_face'>契約DB一覧</A>
+
+    <FORM NAME='DFORM' METHOD='GET' ACTION='DUMMY'>
+       <h3>・コードマスタ</h3>
+        <DIV CLASS="message_info">
+        ※application.ymlの[CodeMasterFilePath]で指定したファイルの内容を表示しています。最新ではないので注意。
+        </DIV>
+        <div th:utext="${dataTable}"></div>
+    </FORM>
+</body>
+
+</html>
