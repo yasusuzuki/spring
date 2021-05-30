@@ -1,0 +1,9 @@
+SELECT [# th:if=${req.maxFetchRows}] TOP [[${req.maxFetchRows}]] [/]
+a.[証券＿番号],a.[保険契約明細区分＿コード],a.[保険契約消滅変更当否＿フラグ],a.[契約始期年月日＿日付],d.[保険契約保険種目＿コード],d.[単位商品＿コード],d.[保険契約明細＿番号],a.[団体＿コード],a.[代理店＿コード],a.[代理店サブ＿コード],a.[契約保険期間年＿数],a.[イベント発生タイムスタンプ＿日付]
+FROM 保険契約 a
+INNER JOIN 保険契約明細 d ON a.[証券＿番号] = d.[証券＿番号] AND a.[契約計上枝番＿番号] = d.[契約計上枝番＿番号]
+WHERE 1 = 1
+[# th:if=${req.policyNumber}]  AND a.[証券＿番号] LIKE '%[[${req.policyNumber}]]%' [/]
+[# th:if=${req.policyHolderName}]           [/]
+[# th:if=${req.policyType}]     AND d.[保険契約保険種目＿コード] LIKE '%%'   [/]
+ORDER BY a.[証券＿番号] DESC

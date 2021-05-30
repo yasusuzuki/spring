@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" th:content="${appName}">
+    <title th:text="${appName}"></title>
+    <link th:href="@{/css/Site.css}" rel="styleSheet">
+    <script type="text/javascript" th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+<h1> 契約DB一覧 </h1>
+
+<FORM NAME='QFORM' METHOD='GET' ACTION='/keiyakuList' >
+    <TABLE CLASS='QueryForm'>
+        <TR>
+            <TD>証券番号(*)：</TD>
+            <TD><input type="text" id="policyNumber" name="policyNumber" th:value="${req.policyNumber}"></TD>
+            <TD>契約者名(*):</TD>
+            <TD ><input type="text" id="policyHolderName" name="policyHolderName" th:value="${req.policyHolderName}"></TD>
+            <TD>MAX:</TD>
+            <TD><input type="number" id="maxFetchRows" name="maxFetchRows" th:value="${req.maxFetchRows}"></TD>
+        </TR>
+        <TR>
+            <TD>種目：</TD>
+            <TD><select id="policyType" name="policyType" th:value="${req.policyType}">
+                <option th:value="''" th:text="'全部'"     th:selected="${req.policyType == ''}" ></option>
+                <option th:value="'73'" th:text="'自動車'" th:selected="${req.policyType == '73'}" ></option>
+                <option th:value="'71'" th:text="'傷害'"   th:selected="${req.policyType == '71'}" ></option>
+            </select></TD>
+            <TD>代理店コード(*)：</TD>
+            <TD><input type="text" id="agentCode" name="agentCode" th:value="${req.agentCode}"></TD>
+            <TD>DB：</TD>
+            <TD><select id="environment" name="environment">
+                <option th:each="item : ${environmentList}" th:value="${item}" th:text="${item}" th:selected="${req.environment == item}" ></option>
+                </select>
+                <font color='lightgrey'>(application.yml内のDBConnection.ENVより)</font>
+            </TD>
+        </TR>
+    </TABLE>
+    <INPUT TYPE='SUBMIT' VALUE='GET' CLASS='getbutton'>
+</FORM>
+<HR SIZE=1 NOSHADE>
+<UL CLASS='MenuBar'>
+    <LI><A HREF='/keiyakuEnquiry' CLASS='button_face'>契約DB詳細</A></LI>
+    <LI><A HREF='/codeMasterEnquiry' CLASS='button_face'>コードマスタ</A></LI>
+    <LI><A HREF='/dataDictionaryEnquiry' CLASS='button_face'>データディクショナリ（データ項目一覧）</A></LI>
+    <LI><A HREF='/teianList' CLASS='button_face'>提案DB一覧</A></LI>
+    <LI><A HREF='/keiyakuHistory' CLASS='button_face button_face_disabled'>契約DB履歴一覧[開発中]</A></LI>
+    <LI><A HREF='/shokenSyoruiSakuseiEnquiry' CLASS='button_face button_face_disabled'>証券書類作成DB[開発中]</A></LI>
+</UL>
+<FORM NAME='DFORM' METHOD='GET' ACTION='DUMMY'>
+    <h3>契約エンティティ</h3>
+    <div th:utext="${dataTable}"></div>
+</FORM>
+
+<PRE th:text="${SQL}"></PRE>
+
+</body>
+</html>
+

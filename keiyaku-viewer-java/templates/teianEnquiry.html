@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" th:content="${appName}">
+    <title th:text="${appName}"></title>
+    <link th:href="@{/css/Site.css}" rel="styleSheet">
+    <script type="text/javascript" th:src="@{/js/script.js}"></script>
+</head>
+
+<BODY>
+<H1> 提案DB詳細 </H1>
+<FORM NAME='QFORM' METHOD='GET' ACTION='/teianEnquiry'>
+    <TABLE  CLASS='QueryForm'>
+        <TR>
+            <TD>提案番号：</TD>
+            <TD><INPUT TYPE="text" ID="ankenNumber" NAME="ankenNumber" th:value="${req.ankenNumber}"></TD>
+            <TD>冗長モード: </TD>
+            <TD><INPUT TYPE='CHECKBOX' ID='verboseMode' NAME='verboseMode' th:checked="${req.verboseMode}" ></TD>
+        </TR>
+    </TABLE>
+    <INPUT TYPE='SUBMIT' VALUE='GET' CLASS='getbutton'>
+</FORM>
+<HR SIZE=1 NOSHADE>
+<UL CLASS='MenuBar'>
+    <LI><A HREF='/teianList' CLASS='button_face'>提案DB一覧</A></LI>
+</UL>
+<FORM NAME='DFORM' METHOD='GET' ACTION='DUMMY'>
+    <UL CLASS='MenuBar'>
+        <LI><A HREF='#提案' CLASS='InternalPageLink'>提案↓</A></LI>
+        <LI><A HREF='#提案種目' CLASS='InternalPageLink'>提案種目↓</A></LI>
+        <LI><A HREF='#提案明細' CLASS='InternalPageLink'>提案明細↓</A></LI>
+        <LI><A HREF='#提案明細担保条件特約' CLASS='InternalPageLink'>提案明細担保条件特約↓</A></LI>
+    </UL>
+    <div th:each="item : ${dataTables}">
+        <H3 th:id='${item.logicalTableName}' th:text="${item.logicalTableName}"></H3>
+        <DIV th:utext="${item.html}"></DIV>
+    </div>
+</FORM>
+</BODY>
+
+</HTML>

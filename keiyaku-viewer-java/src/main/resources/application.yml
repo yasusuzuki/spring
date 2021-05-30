@@ -1,0 +1,9 @@
+logging.level.root: INFO
+
+spring.thymeleaf.prefix: file:./templates/
+
+#For Test DB
+# spring:
+#     datasource:
+#         url: jdbc:ucanaccess://C:/golang/project/golang/web-sample-01/data/archive/keiyaku.accdb
+#         driver-class-name: net.ucanaccess.jdbc.UcanaccessDriver
