@@ -1,9 +1,12 @@
 package demo;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,14 +21,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @EnableAutoConfiguration
 public class MySampleController {
 	Logger logger = Logger.getLogger(MySampleController.class.getName());
-	@RequestMapping("/my_sample")
+	Long id = 100L;
+    @Autowired
+    private JdbcTemplate jdbc;
+    
+	@RequestMapping("/get")
 	@ResponseBody
-	String my_sample(){
-		Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).setLevel(Level.ALL);
-		logger.setLevel(Level.ALL);
-		logger.info("Log Level=" + logger.getLevel());
-		logger.fine("FINE");
-		return "My aabbcc   !!";
+	public String my_sample(){
+		List<String> ids = this.jdbc.queryForList("select title from TODOS",String.class);
+		logger.info("my_sample " + ids);
+		return "GET: TODOS " + ids.toString();
 	}
 	
+	@RequestMapping("/add")
+	@ResponseBody
+	public String add(){
+		this.jdbc.update("INSERT INTO TODOS (id,status,title,due_date,priority,description,done_date) VALUES (?,?,?,?,?,?,?)",id,"OPEN","title","2019-12-31","AAA","desc",null);
+		id++;
+		logger.info("add");
+		return "ADD 100";
+	}
 }
