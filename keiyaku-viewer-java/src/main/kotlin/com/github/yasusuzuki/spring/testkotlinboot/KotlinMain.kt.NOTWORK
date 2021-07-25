@@ -1,0 +1,14 @@
+package com.github.yasusuzuki.spring.testkotlinboot
+
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
+
+/** MainクラスがKotlinだとなぜかVSCodeのCtrl+F5で実行しても起動できない。
+ * ConfigDefがapplication.xmlを読んでくれない
+ * mvn spring-boot:run なら動作するが、面倒なので、いったんJavaでMainを書く */
+@SpringBootApplication
+class KotlinMain
+
+fun main(args: Array<String>) {
+	runApplication<KotlinMain>(*args)
+}

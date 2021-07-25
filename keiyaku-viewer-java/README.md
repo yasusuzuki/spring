@@ -1,9 +1,26 @@
 # Read Me First
 
+# Getting Started
+* テスト
+  * mvn spring-boot:run
+* 配布事前準備
+  * ビルドする
+    * mvn clean package
+  * 必要ライブラリをダウンロードする
+    * java -jar target\keiyaku-viewer-java-1.0.0.jar --thin.dryrun=true --thin.root=libs
+  * ZIPにまとめる
+    * mv target\keiyaku-viewer-java-1.0.0.jar .
+    * copy keiyaku-viewer-java-1.0.0.jar templates/ libs/ data/ main.cmd to dist_folder(*)
+* 起動する
+  * cd dist_folder(*)
+  * java -jar keiyaku-viewer-java-1.0.0.jar --thin.offline=true --thin.root=libs
+  * OR .\main.cmd
+
+* dist_folder --- 名前は任意
 
 # PEND items
 
-* [  ]  設定ファイルの外部化。
+* [済]  設定ファイルの外部化。
 * [  ]  CodeMasterEnquiry と
 * [済]  不正なSQLの場合、HikariCPがエラーを返さず無限ループに入ってしまう問題を解決する
   * HikariCPのバージョンを2.5.0から3.4.5に変更したことで解決。
@@ -39,11 +56,19 @@ fun sql(@RequestParam req:HashMap<String, String>, model:Model ): String? { ... 
 <!-- 修正後 -->
 <div th:utext="${dataTable}"></div>
 ```
-* [  ] JUnit5に移行する。pom.xmlの設定だけでよいはずだが、やりかたがわからない
+* [済] JUnit5に移行する
+* [済] codemaster.csvのコード値の前ゼロが削除されているのにあわせて、検索ロジックを修正。CSVをExcelで開くだけで、前ゼロ削除されてしまうので、CSVを修正するのではなく、検索ロジックを修正するほうが適切という判断。2021/7/8
+* [済] Javaプログラムが出力したJSONファイルのサポート。(E0001)
+   * DictionaryクラスでJava物理名もサポート。data_dictionary.csvの更新が必要。
+   * JsonをDBテーブルのような形式で表示するJson詳細画面を作成。JsonクラスとJsonEnquiryクラスを追加
+* [済] SQLの実行をThymeleafのテンプレート処理時まで実行遅延させることで、体感速度を向上 (E0002)
+   * すべてのSQLの実行を待たずに、ブラウザの描画が始まるので表示が始まるまで速くなった
+* [済] buildの高速化。kotlin incremental compilerの導入。pom.xmlを修正した(E0003)
+* [済] DB接続のアカウントがリボークされてしまう問題への対応。(E0004)
+   * DBコネクションプールにためておく接続数をデフォルトの10から1へ変更した
 
-# Getting Started
+# Release Procedure
 
-* TODO: これから
 
 ### Reference Documentation
 For further reference, please consider the following sections:

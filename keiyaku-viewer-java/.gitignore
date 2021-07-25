@@ -2,4 +2,6 @@ target/
 application_PROD.yml
 data/
 .settings/
+libs/
 
+keiyaku-viewer-java-*.jar

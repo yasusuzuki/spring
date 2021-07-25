@@ -35,8 +35,8 @@
     </UL>
     <div th:each="item : ${dataTables}">
         <H3 th:id='${item.logicalTableName}' th:text="${item.logicalTableName}"></H3>
-        <DIV th:utext="${item.html}"></DIV>
-    </div>
+        <!--/* E0002 */-->
+        <DIV th:utext="${item.html.invoke()}"></DIV>    </div>
 </FORM>
 </BODY>
 

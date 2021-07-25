@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang=ja>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="web-keiyaku-viewer_v1.0">
+    <title>web-keiyaku-viewer_v1.0</title>
+    <link th:href="@{/css/Site.css}" rel="styleSheet">
+    <script type="text/javascript" th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+    <h1> モニター </h1>
+    <div th:each="item : ${ds}">
+        <H3 th:id='${item.key}' th:text="${item.key}"></H3>
+        <DIV>Active: <SPAN th:utext="${item.value.active}"></SPAN></DIV>
+        <DIV>Idle: <SPAN th:utext="${item.value.idle}"></SPAN></DIV>
+        <DIV>Max: <SPAN th:utext="${item.value.max}"></SPAN></DIV>
+    </div>
+</body>
+</html>

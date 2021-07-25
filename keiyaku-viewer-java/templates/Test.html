@@ -1,0 +1,10 @@
+
+<!-- here doc -->
+<h1 th:text="${title}"></h1>
+<p th:text="'SELECT *
+  FROM hokenkeiyaku ' +
+    ${username}"></p>
+
+<!-- Spring Bean can call method -->
+
+<p th:text="|SELECT *  FROM hokenkeiyaku  ${username}|"></p>
