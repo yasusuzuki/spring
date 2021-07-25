@@ -1,8 +1,15 @@
 # Read Me First
 
 # Getting Started
+* 配布されたzipファイルを解凍する
+* application.yml内データベース接続設定を修正する
+* main.cmdを実行する
+* データディクショナリが古い場合、dat/フォルダ内のcsvファイルを更新する
+
+# Release Procedure
 * テスト
-  * mvn spring-boot:run
+  * mvn spring-boot:run　で起動。ホットデプロイ状態なので、その後の修正はmvn compileを実行するだけ
+  * もしくは mvn 
 * 配布事前準備
   * ビルドする
     * mvn clean package
@@ -21,16 +28,17 @@
 # PEND items
 
 * [済]  設定ファイルの外部化。
-* [  ]  CodeMasterEnquiry と
+* [済]  CodeMasterEnquiry で、順番が描画のたびに変わってしまう問題の対応。
+  * 単純なMapではなくLinkedHashMapを用いることで解消
 * [済]  不正なSQLの場合、HikariCPがエラーを返さず無限ループに入ってしまう問題を解決する
   * HikariCPのバージョンを2.5.0から3.4.5に変更したことで解決。
   * 参考：https://github.com/brettwooldridge/HikariCP/blob/HikariCP-3.4.5/src/main/java/com/zaxxer/hikari/pool/ProxyConnection.java
-* [  ] DB2のテーブル定義ができていない
+* [  ] テスト環境をAccess DBからDB2（もしくはhsqldb)へ変更
 * [済] Requestをクラスで受け取ると、汎用性がない
   * ``MultiValueMap<String,String>``で受け取れることがわかったが、Value部分が常にListになっていて参照する側がわかりにくい
   * https://qiita.com/yuji38kwmt/items/516d00fb7f0b360bd7c9
 ```Kotlin
-    fun sql(@RequestParam req: MultiValueMap<String, String>, model:Model ): String? { ... }
+fun sql(@RequestParam req: MultiValueMap<String, String>, model:Model ): String? { ... }
 
 data class Request
 fun sql(@RequestParam req:HashMap<String, String>, model:Model ): String? { ... }
@@ -67,7 +75,6 @@ fun sql(@RequestParam req:HashMap<String, String>, model:Model ): String? { ... 
 * [済] DB接続のアカウントがリボークされてしまう問題への対応。(E0004)
    * DBコネクションプールにためておく接続数をデフォルトの10から1へ変更した
 
-# Release Procedure
 
 
 ### Reference Documentation
