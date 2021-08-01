@@ -86,7 +86,7 @@ fun sql(@RequestParam req:HashMap<String, String>, model:Model ): String? { ... 
 * [済] 団体情報取得のための団体詳細画面を開発
    * GroupClientEnquiry.kt groupClientEnquiry.htmlの追加
 * [済] 代理店情報取得のための代理店詳細画面を開発
-   * GroupClientEnquiry.kt groupClientEnquiry.htmlの追加
+   * GroupClientEnquiry.kt groupClientEnquiry.htmlの追加 a
 
 
 
