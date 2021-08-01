@@ -1,13 +1,13 @@
 package com.github.yasusuzuki.spring.testkotlinboot
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import kotlin.test.assertEquals
 
 class TestConfigDef {
     var conf = ConfigDef()
 
-    @BeforeAll
+    @BeforeEach
     fun init(){
         conf.dBConnections = listOf(
             mapOf("ENV" to "dummy env1","DB_SERVER_PRODUCT" to "DB2"),
@@ -19,6 +19,7 @@ class TestConfigDef {
                 println( "        " + k + "=" + v );
             }
         }
+        conf.setCurrentEnvironment("dummy env1")
     }
 
     @Test

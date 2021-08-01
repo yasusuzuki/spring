@@ -15,11 +15,14 @@ class TeianList {
         var maxFetchRows: Int = 100,
         var policyType: String = "",
         var agentCode: String = "",
+        var amendmentCode: String = "",
         var environment: String = ""
     )
     
     @Autowired
     lateinit var config: ConfigDef
+    @Autowired
+    lateinit var dic: Dictionary
     @Autowired
     lateinit var query: DatabaseQuery
     
@@ -61,6 +64,24 @@ class TeianList {
             "提案案件＿番号" to fun(_:String?,value:String?,_:List<String>?,_:Map<String,Any?>?):String{
                 return "<A HREF='/teianEnquiry?ankenNumber=" + value + "'>" + value + "</A>"
             },
+            "団体＿コード" to fun(_:String?,value:String?,_:List<String>?,_:Map<String,Any?>?):String{
+                return if ( value != null ) { 
+                    "<A HREF='/groupClientEnquiry?groupClientCode=" + value + "'>" + value + "</A>"
+                } else {
+                    "NULL"
+                }
+            },
+            "代理店＿コード" to fun(_:String?,_:String?,_:List<String>?,values:Map<String,Any?>?):String{
+                var agentCode = values?.get("代理店＿コード")
+                var agentSubCode = values?.get("代理店サブ＿コード")
+                return if ( agentCode != null && agentSubCode != null ) { 
+                    "<A HREF='/agentEnquiry?agentCodeSubCode=" + agentCode + agentSubCode + "'>" + agentCode + '-' + agentSubCode + "</A>"
+                } else if ( agentCode != null ) {
+                    "<A HREF='/agentEnquiry?agentCodeSubCode=" + agentCode +  "'>" + agentCode + "</A>"
+                } else {
+                    "NULL"
+                }
+            },
             "HIDE_DB_SYSTEM_COLUMNS_FLAG" to fun(_:String?,_:String?,_:List<String>?,_:Map<String,Any?>?):String{
                 return "off"
             },
@@ -72,6 +93,7 @@ class TeianList {
         model["environmentList"] = config.listEnvironment()
         model["req"] = req
         model["SQL"] = sql
+        model["amendmentCodes"] = dic.CodeMaster.get("契約変更内容＿コード") ?: listOf(Dictionary.CodeValueNamePair("XXX","ディクショナリからコード値取得失敗"))
         return "teianList"
     }
 }

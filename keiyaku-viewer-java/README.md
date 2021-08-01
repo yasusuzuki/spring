@@ -8,22 +8,24 @@
 
 # Release Procedure
 * テスト
-  * mvn spring-boot:run　で起動。ホットデプロイ状態なので、その後の修正はmvn compileを実行するだけ
-  * もしくは mvn 
+  * コンテナが必要な場合は、以下でアプリケーションを起動させる
+    * mvn spring-boot:run　で起動。ホットデプロイ状態なので、その後の修正はmvn compileを実行するだけ
+  * コンテナが不要の場合は、特定のテストケースを実行させる
+    * mvn test "-Dtest=com.github.yasusuzuki.spring.testkotlinboot.TestDictionary
 * 配布事前準備
   * ビルドする
     * mvn clean package
-  * 必要ライブラリをダウンロードする
-    * java -jar target\keiyaku-viewer-java-1.0.0.jar --thin.dryrun=true --thin.root=libs
-  * ZIPにまとめる
     * mv target\keiyaku-viewer-java-1.0.0.jar .
+  * 必要ライブラリをダウンロードする
+    * java -jar keiyaku-viewer-java-1.0.0.jar --thin.dryrun=true --thin.root=libs
+  * 必要ライブラリに追加があったか確認する
+    * ls -r libs | where {$_.LastWriteTime.Date -eq (Get-Date).Date} | Resolve-Path -relative 
+  * 起動する
+    * java -jar keiyaku-viewer-java-1.0.0.jar --thin.offline=true --thin.root=libs
+    * OR .\main.cmd
+  * ZIPにまとめる
     * copy keiyaku-viewer-java-1.0.0.jar templates/ libs/ data/ main.cmd to dist_folder(*)
-* 起動する
-  * cd dist_folder(*)
-  * java -jar keiyaku-viewer-java-1.0.0.jar --thin.offline=true --thin.root=libs
-  * OR .\main.cmd
-
-* dist_folder --- 名前は任意
+    * ※　dist_folder --- 名前は任意
 
 # PEND items
 
@@ -65,25 +67,32 @@ fun sql(@RequestParam req:HashMap<String, String>, model:Model ): String? { ... 
 <div th:utext="${dataTable}"></div>
 ```
 * [済] JUnit5に移行する
+   * アサーションはAssertKを採用。モックはKotlin-mockitoを採用。
 * [済] codemaster.csvのコード値の前ゼロが削除されているのにあわせて、検索ロジックを修正。CSVをExcelで開くだけで、前ゼロ削除されてしまうので、CSVを修正するのではなく、検索ロジックを修正するほうが適切という判断。2021/7/8
 * [済] Javaプログラムが出力したJSONファイルのサポート。(E0001)
    * DictionaryクラスでJava物理名もサポート。data_dictionary.csvの更新が必要。
-   * JsonをDBテーブルのような形式で表示するJson詳細画面を作成。JsonクラスとJsonEnquiryクラスを追加
+   * JsonをDBテーブルのような形式で表示するJsonEnquiry画面を作成。JsonクラスとJsonEnquiryクラスを追加
+   * jackson-annotations-2.11.4.jar jackson-core-2.11.4.jar jackson-databind-2.11.4.jarをランタイムに追加する必要あり
 * [済] SQLの実行をThymeleafのテンプレート処理時まで実行遅延させることで、体感速度を向上 (E0002)
-   * すべてのSQLの実行を待たずに、ブラウザの描画が始まるので表示が始まるまで速くなった
+   * Controller内でSQLを実行せず、Thymeleaf内でSQLを呼び出すラムダ式をinvoke()するように修正
 * [済] buildの高速化。kotlin incremental compilerの導入。pom.xmlを修正した(E0003)
 * [済] DB接続のアカウントがリボークされてしまう問題への対応。(E0004)
    * DBコネクションプールにためておく接続数をデフォルトの10から1へ変更した
+* [済] 契約変更を変更内容で絞り込みできるように検索条件を変更する
+   * SQLの変更、検索条件への追加、列を集約処理する
+* [  ] JsonEnquiry画面で、もともとのJava物理名が表示されていない問題の対応
+   * L2P(),P2L()の派生で、L2J(),J2L()を作成する案
+* [  ] CodeMasterEnquiry画面に、Java物理名も表示する変更
+* [済] 団体情報取得のための団体詳細画面を開発
+   * GroupClientEnquiry.kt groupClientEnquiry.htmlの追加
+* [済] 代理店情報取得のための代理店詳細画面を開発
+   * GroupClientEnquiry.kt groupClientEnquiry.htmlの追加
 
 
 
 ### Reference Documentation
 For further reference, please consider the following sections:
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/2.4.5/maven-plugin/reference/html/)
-* [Create an OCI image](https://docs.spring.io/spring-boot/docs/2.4.5/maven-plugin/reference/html/#build-image)
-
-
 * Hikari CP のREAMD.md とてもわかりやすい
   * https://github.com/brettwooldridge/HikariCP/blob/dev/README.md
+

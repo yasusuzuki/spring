@@ -32,7 +32,8 @@ class TestJackson {
         jsonRecords.forEach{ tableName, records ->
             var columnList = records.get(0).keys.toList()
             var sqlResultSet = Database.SQLResultSet(columnList,records)
-            println("<h1>$tableName</h1>" + dq.buildHTML(sqlResultSet,"",mapOf()))
+            var out = "<h1>$tableName</h1>" + dq.buildHTML(sqlResultSet,"",mapOf())
+            //println(out)
         }
     }
 }

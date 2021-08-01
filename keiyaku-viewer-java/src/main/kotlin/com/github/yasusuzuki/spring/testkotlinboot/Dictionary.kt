@@ -42,12 +42,14 @@ class Dictionary {
         }
     }
 
-    var L2PDBTables = linkedMapOf("" to "")
-    var L2PDictionary = linkedMapOf("" to DomainPhysicalNamePair("", ""))
-    var P2LDBTables = linkedMapOf("" to "")
-    var P2LDictionary = linkedMapOf("" to DomainLogicalNamePair("", ""))
     data class DomainPhysicalNamePair(val domain: String = "", val javaName: String = "", val physicalName: String = "")
     data class DomainLogicalNamePair(val domain: String = "", val logicalName: String = "")
+    data class TableDefinition(val dbName: String = "", val logicalTableName: String = "", val primaryKey: String = "")
+    var L2PDBTables:MutableMap<String,String> = mutableMapOf()
+    var L2PDictionary:MutableMap<String,DomainPhysicalNamePair> = mutableMapOf()
+    var DBTables:MutableList<TableDefinition> = mutableListOf()
+    var P2LDBTables:MutableMap<String,String> = mutableMapOf()
+    var P2LDictionary:MutableMap<String,DomainLogicalNamePair> = mutableMapOf()
 
     
     fun initL2PDictionary() {
@@ -61,8 +63,9 @@ class Dictionary {
         for (line in lines) {
             var words = line.split(",")
             if (words.size < 2) continue
-            // words[0]がテーブル論理名、words[1]がテーブル物理名
-            L2PDBTables[words[0]] = words[1]
+            // 0:DB名、1:テーブル論理名、2:テーブル物理名、3:検索に用いる主キー
+            L2PDBTables[words[1]] = words[2]
+            DBTables += TableDefinition(words[0],words[1],words[3])
         }
         // データディクショナリのロード
         file = Paths.get(config.dataDictionaryFilePath)
@@ -88,6 +91,10 @@ class Dictionary {
             P2LDictionary[v.javaName] = DomainLogicalNamePair(v.domain, k)
 
         }
+    }
+
+    fun listDBTables(dbName: String):List<TableDefinition>{
+        return DBTables.filter{e -> e.dbName == dbName}
     }
 
     /** データ項目論理名からドメイン名をひく */

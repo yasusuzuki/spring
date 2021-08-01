@@ -19,6 +19,11 @@
             <TD><input type="text" id="ankenNumber" name="ankenNumber" th:value="${req.ankenNumber}"></TD>
             <TD>契約者名(*):</TD>
             <TD ><input type="text" id="policyHolderName" name="policyHolderName" th:value="${req.policyHolderName}"></TD>
+            <TD>変更内容:</TD>
+            <TD ><select id="amendmentCode" name="amendmentCode" th:value="${req.amendmentCode}">
+                <option th:value="''" th:text="'全部'"     th:selected="${req.amendmentCode == ''}" ></option>
+                <option th:each="item:${amendmentCodes}" th:value="${item.codeValue}" th:text="|${item.codeValue}:${item.codeName}|" th:selected="${req.amendmentCode == item.codeValue}"></option> 
+            </select>
             <TD>MAX:</TD>
             <TD><input type="number" id="maxFetchRows" name="maxFetchRows" th:value="${req.maxFetchRows}"></TD>
         </TR>
@@ -31,6 +36,8 @@
             </select></TD>
             <TD>代理店コード(*)：</TD>
             <TD><input type="text" id="agentCode" name="agentCode" th:value="${req.agentCode}"></TD>
+            <TD></TD>
+            <TD></TD>
             <TD>DB：</TD>
             <TD><select id="environment" name="environment">
                 <option th:each="item : ${environmentList}" th:value="${item}" th:text="${item}" th:selected="${req.environment == item}" ></option>
@@ -47,6 +54,9 @@
     <LI><A HREF='/keiyakuList' CLASS='button_face'>契約DB一覧</A></LI>
     <LI><A HREF='/codeMasterEnquiry' CLASS='button_face'>コードマスタ</A></LI>
     <LI><A HREF='/dataDictionaryEnquiry' CLASS='button_face'>データディクショナリ（データ項目一覧）</A></LI>
+    <LI><A HREF='/groupClientEnquiry' CLASS='button_face'>団体詳細</A></LI>
+    <LI><A HREF='/agentEnquiry' CLASS='button_face'>代理店詳細</A></LI>
+
 </UL>
 <FORM NAME='DFORM' METHOD='GET' ACTION='DUMMY'>
     <h3>・提案エンティティ</h3>

@@ -10,31 +10,29 @@
 </head>
 
 <BODY>
-<H1> Json </H1>
-<FORM NAME='QFORM' METHOD='POST' ENCTYPE="multipart/form-data" ACTION='/jsonEnquiry'>
+<H1> 代理店詳細 </H1>
+<FORM NAME='QFORM' METHOD='GET' ACTION='/agentEnquiry'>
     <TABLE  CLASS='QueryForm'>
         <TR>
-            <TD>JSONファイル：</TD>
-            <TD><INPUT TYPE="file" ID="jsonFile" NAME="jsonFile"></TD>
+            <TD>代理店コード+代理店サブコード：</TD>
+            <TD><INPUT TYPE="text" ID="agentCodeSubcode" NAME="agentCodeSubcode" th:value="${req.agentCodeSubcode}"></TD>
             <TD>冗長モード: </TD>
             <TD><INPUT TYPE='CHECKBOX' ID='verboseMode' NAME='verboseMode' th:checked="${req.verboseMode}" ></TD>
         </TR>
     </TABLE>
     <INPUT TYPE='SUBMIT' VALUE='GET' CLASS='getbutton'>
 </FORM>
-
-<PRE th:if="${error}" th:text="${error}" CLASS="message_error"></PRE>
-<PRE th:if="${jsonString}" th:text="${jsonString}" CLASS="message_info"></PRE>
-
 <HR SIZE=1 NOSHADE>
 <UL CLASS='MenuBar'>
-    <LI><A HREF='/teianList' CLASS='button_face'>提案DB一覧</A></LI>
+    <LI><A HREF='/keiyakuList' CLASS='button_face'>契約DB一覧</A></LI>
 </UL>
 <FORM NAME='DFORM' METHOD='GET' ACTION='DUMMY'>
     <div th:each="item : ${dataTables}">
         <H3 th:id='${item.logicalTableName}' th:text="${item.logicalTableName}"></H3>
-        <DIV th:utext="${item.html}"></DIV>
+        <!--/* E0002 */-->
+        <DIV th:utext="${item.html.invoke()}"></DIV>
     </div>
 </FORM>
 </BODY>
+
 </HTML>

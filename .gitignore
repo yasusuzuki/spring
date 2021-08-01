@@ -1,6 +1,5 @@
 json-parse/
 json-parse2/
-test-ktor/
 test-kotlin-gradle/
 
 *.zip

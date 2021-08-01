@@ -37,13 +37,7 @@ class KeiyakuEnquiry {
             var html: () -> String = {""}
         )
         var dataTables : MutableList<TableResultPair> = mutableListOf()
-        for ( logicalTableName in dic.L2PDBTables.keys ) {
-            //DBテーブル一覧から契約関連エンティティだけを抽出する
-            if ( ! logicalTableName.startsWith("保険契約")  &&
-                 ! logicalTableName.startsWith( "請求保険料")   &&
-                 ! logicalTableName.startsWith("保険対象")     ) {
-                        continue
-            }
+        for ( e in dic.listDBTables("契約") ) {
             //Thymeleafのテンプレート処理まで実行を遅らせることで、すべての編集処理が終わる前
             //ブラウザの描画が始まるので体感処理速度があがる
             var html: () -> String
@@ -54,24 +48,24 @@ class KeiyakuEnquiry {
                 .joinToString(",")
             if (polNumsString == "") {
                 html = {"<DIV CLASS='message_info'>証券番号なし</DIV>"}
-            } else if ( dic.L2P(logicalTableName) == "NO_PHYSICAL_TABLE" ) {
+            } else if ( dic.L2P(e.logicalTableName) == "NO_PHYSICAL_TABLE" ) {
                 html = {"<DIV CLASS='message_info'>物理テーブルなし</DIV>"}
             } else {
                 if ( config.getCurrentDBServerProduct() == "ACCESS_VIA_ODBC" ) {
                     html = {query.buildHTMLFromSQL(
                     String.format("SELECT * FROM [%s] WHERE [%s] IN (%s) ",
-                    logicalTableName,
+                    e.logicalTableName,
                     "証券＿番号",
                     polNumsString),callback)}
                 } else {
                     html = {query.buildHTMLFromSQL(
                     String.format("SELECT * FROM %s WHERE %s IN (%s) ",
-                    dic.L2P(logicalTableName),
+                    dic.L2P(e.logicalTableName),
                     dic.L2P("証券＿番号"),
                     polNumsString),callback)}
                 }
             }
-            dataTables.add(TableResultPair(logicalTableName,html))
+            dataTables.add(TableResultPair(e.logicalTableName,html))
         }
         model["dataTables"] =  dataTables
         model["appName"] = "Keiyaku Viewer"

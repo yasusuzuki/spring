@@ -90,7 +90,7 @@ class Database {
         }
         //accessdb_cache
         val jdbcUrl = String.format(
-            "jdbc:ucanaccess://%sXXX;keepMirror=%s;",
+            "jdbc:ucanaccess://%s;keepMirror=%s;",
             env["DB"],
             folder.resolve("cache")
         )

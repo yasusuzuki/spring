@@ -42,6 +42,7 @@ class CodeMasterEnquiry {
         )
         var list = mutableListOf<DomainValueNameTriple>()
         for ( domain in dic.CodeMaster.keys ) {
+            //検索条件と部分一致でも抽出できるようにindexOf()を用いる
             if ( domain.indexOf(req.domain) != -1 ) { //req.Domainがブランクの場合は常に真
                 for ( m  in dic.CodeMaster[domain]!! ) {
                     //DEBUG: println("codeName ${m.codeName}")
