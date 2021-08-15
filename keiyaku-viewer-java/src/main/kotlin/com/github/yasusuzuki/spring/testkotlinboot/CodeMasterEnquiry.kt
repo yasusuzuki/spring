@@ -1,8 +1,6 @@
 package com.github.yasusuzuki.spring.testkotlinboot
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
-import org.springframework.stereotype.Component
 
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -11,16 +9,13 @@ import org.springframework.web.bind.annotation.ModelAttribute
 
 
 @Controller
-class CodeMasterEnquiry {
+class CodeMasterEnquiry(var dic: Dictionary) {
     data class Request(
         var domain: String = "", 
         var codeValue: String = "", 
         var codeName: String = "", 
         var maxFetchRows: Int = 500, 
     )
-
-    @Autowired
-    lateinit var dic: Dictionary
 
     @GetMapping("/codeMasterEnquiry" )
     fun execute(@ModelAttribute req:Request, model:Model ): String {

@@ -1,6 +1,5 @@
 package com.github.yasusuzuki.spring.testkotlinboot
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -8,23 +7,21 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 
 @Controller
-class TeianList {
+class TeianList (var config: ConfigDef, var dic: Dictionary, var query: DatabaseQuery) {
     data class Request(
         var ankenNumber: String = "",
         var policyHolderName: String = "",
         var maxFetchRows: Int = 100,
         var policyType: String = "",
         var agentCode: String = "",
+        var policyNumber: String = "",
         var amendmentCode: String = "",
+        var userId: String = "",
         var environment: String = ""
+
     )
     
-    @Autowired
-    lateinit var config: ConfigDef
-    @Autowired
-    lateinit var dic: Dictionary
-    @Autowired
-    lateinit var query: DatabaseQuery
+
     
     @GetMapping("/teianList" )
     fun execute(@ModelAttribute req:Request, model:Model ): String {
@@ -33,7 +30,6 @@ class TeianList {
         //環境をスイッチ
         config.setCurrentEnvironment(req.environment)
         req.environment = config.getCurrentEnvironment()
-
 
         var sql = query.getSQL("teianListSQL",req)
 
@@ -88,12 +84,12 @@ class TeianList {
 
         )
         model["dataTable"] = query.buildHTMLFromSQL(sql,callback)
-
         model["appName"] = "Keiyaku Viewer"
         model["environmentList"] = config.listEnvironment()
         model["req"] = req
         model["SQL"] = sql
         model["amendmentCodes"] = dic.CodeMaster.get("契約変更内容＿コード") ?: listOf(Dictionary.CodeValueNamePair("XXX","ディクショナリからコード値取得失敗"))
+     
         return "teianList"
     }
 }

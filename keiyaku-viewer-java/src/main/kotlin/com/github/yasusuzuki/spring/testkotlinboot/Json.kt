@@ -2,7 +2,6 @@
 package com.github.yasusuzuki.spring.testkotlinboot
 
 import javax.annotation.PostConstruct
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import com.fasterxml.jackson.core.JsonGenerationException
@@ -14,9 +13,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ValueNode
 
 @Component
-class Json {
-    @Autowired
-    lateinit var dic : Dictionary
+class Json(var dic : Dictionary) {
+
 
     fun readJsonFromString(jsonString:String) : MutableMap<MutableList<String>, String> {
         var mapper = ObjectMapper();

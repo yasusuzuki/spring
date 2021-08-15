@@ -46,7 +46,7 @@ class ConfigDef {
 
 
     @PostConstruct
-    fun init() {
+    fun postConstruct() {
         if ( dBConnections.size == 0 ) {
             throw Error("application.ymlにENVが登録されていません")
         }

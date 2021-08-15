@@ -8,7 +8,7 @@ class TestConfigDef {
     var conf = ConfigDef()
 
     @BeforeEach
-    fun init(){
+    fun postConstruct(){
         conf.dBConnections = listOf(
             mapOf("ENV" to "dummy env1","DB_SERVER_PRODUCT" to "DB2"),
             mapOf("ENV" to "dummy env2","DB_SERVER_PRODUCT" to "ACCESS_VIA_ODBC"),

@@ -9,18 +9,12 @@ import org.springframework.web.bind.annotation.ModelAttribute
 
 
 @Controller
-class TeianEnquiry {
+class TeianEnquiry(var config: ConfigDef, var query: DatabaseQuery, var dic: Dictionary) {
     //policyNumberはリストで来る場合とそうでない場合があるが、SpringMVCがコンマ区切りのStringに変換してセットしてくれる
     data class Request(
         var ankenNumber: String = "", //複数設定される場合は、コンマ区切りになる
         var verboseMode: Boolean = false
     )
-    @Autowired
-    lateinit var config: ConfigDef
-    @Autowired
-    lateinit var query: DatabaseQuery
-    @Autowired
-    lateinit var dic: Dictionary
 
     @GetMapping("/teianEnquiry" )
     fun execute(@ModelAttribute req:Request, model:Model ): String {

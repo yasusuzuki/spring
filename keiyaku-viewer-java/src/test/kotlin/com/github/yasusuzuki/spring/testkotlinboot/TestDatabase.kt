@@ -10,7 +10,7 @@ class TestDatabase {
     lateinit var con : Connection 
 
     @BeforeEach
-    fun init() {
+    fun beforeEach() {
         //Class.forName("com.ibm.db2.jcc.DB2Driver")
         Class.forName("org.hsqldb.jdbc.JDBCDriver");
 

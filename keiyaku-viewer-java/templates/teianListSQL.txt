@@ -1,27 +1,61 @@
 SELECT a.提案案件＿番号,a.提案案件番号枝番＿番号,a.提案連続＿番号,a.提案設計データバージョン番号＿数,d.保険契約明細＿番号,
    a.証券＿番号,d.保険契約保険種目＿コード,d.単位商品＿コード,a.保険契約明細区分＿コード,a.保険契約消滅変更当否＿フラグ,a.契約始期年月日＿日付,
-   b.契約者氏名＿漢字,a.団体＿コード,a.代理店＿コード,a.代理店サブ＿コード,a.契約保険期間年＿数,
-   COALESCE(CONCAT(c.契約変更内容＿コード＿０１,','),'')||COALESCE(CONCAT(c.契約変更内容＿コード＿０２,','),'')||COALESCE(CONCAT(c.契約変更内容＿コード＿０３,','),'')||COALESCE(CONCAT(c.契約変更内容＿コード＿０４,','),'')||
-   COALESCE(CONCAT(d.明細契約変更内容＿コード＿０１,','),'')||COALESCE(CONCAT(d.明細契約変更内容＿コード＿０２,','),'')||COALESCE(CONCAT(d.明細契約変更内容＿コード＿０３,','),'')||COALESCE(CONCAT(d.明細契約変更内容＿コード＿０４,','),'')||   
-   COALESCE(CONCAT(e.明細契約変更内容＿コード,','),'') as 契約変更内容＿コード
-   a.イベント発生タイムスタンプ＿日付 
+   b.契約者氏名＿漢字,a.団体＿コード,a.代理店＿コード,a.代理店サブ＿コード,a.契約保険期間年＿数, c.契約新規変更訂正区分＿コード,
+   c.保険契約変更設計対象＿コード, d.保険契約明細変更設計対象＿コード,
+   c.契約変更内容＿コード＿０１||' '||c.契約変更内容＿コード＿０２||' '||c.契約変更内容＿コード＿０３||' '||c.契約変更内容＿コード＿０４||' '||
+   d.明細契約変更内容＿コード＿０１||' '||d.明細契約変更内容＿コード＿０２||' '||d.明細契約変更内容＿コード＿０３||' '||d.明細契約変更内容＿コード＿０４||' '||
+  COALESCE(e1.明細契約変更内容＿コード＿０１||' '||e1.明細契約変更内容＿コード＿０２||' '||e1.明細契約変更内容＿コード＿０３||' '||e1.明細契約変更内容＿コード＿０４,'')||' '||
+  COALESCE(e2.明細契約変更内容＿コード＿０１||' '||e2.明細契約変更内容＿コード＿０２||' '||e2.明細契約変更内容＿コード＿０３||' '||e2.明細契約変更内容＿コード＿０４,'')||' '||
+  COALESCE(e3.明細契約変更内容＿コード＿０１||' '||e3.明細契約変更内容＿コード＿０２||' '||e3.明細契約変更内容＿コード＿０３||' '||e3.明細契約変更内容＿コード＿０４,'') 
+    as 契約変更内容＿コード,
+   a.イベント発生タイムスタンプ＿日付,a.データ登録ユーザーＩＤ＿英数カナ
 FROM 提案 a 
 INNER JOIN 提案．契約者 b ON a.契約管理区分キー＿英数カナ = b.契約管理区分キー＿英数カナ AND a.提案設計データバージョン番号＿数  = b.提案設計データバージョン番号＿数 AND a.提案案件＿番号  = b.提案案件＿番号 AND a.提案案件番号枝番＿番号  = b.提案案件番号枝番＿番号 AND a.提案連続＿番号  = b.提案連続＿番号 
 INNER JOIN 提案プラン．保険契約計上 c ON a.契約管理区分キー＿英数カナ = c.契約管理区分キー＿英数カナ AND a.提案設計データバージョン番号＿数  = c.提案設計データバージョン番号＿数 AND a.提案案件＿番号  = c.提案案件＿番号 AND a.提案案件番号枝番＿番号  = c.提案案件番号枝番＿番号 AND a.提案連続＿番号  = c.提案連続＿番号 AND c.提案案件補償プラン＿コード = '001'
 INNER JOIN 提案プラン．保険契約明細計上 d ON a.契約管理区分キー＿英数カナ = d.契約管理区分キー＿英数カナ AND a.提案設計データバージョン番号＿数  = d.提案設計データバージョン番号＿数 AND a.提案案件＿番号  = d.提案案件＿番号 AND a.提案案件番号枝番＿番号  = d.提案案件番号枝番＿番号 AND a.提案連続＿番号  = d.提案連続＿番号 AND d.提案案件補償プラン＿コード = '001'
-LEFT OUTER JOIN TABLE(
-               SELECT ee.契約管理区分キー＿英数カナ,ee.提案設計データバージョン番号＿数,ee.提案案件＿番号,ee.提案案件番号枝番＿番号,ee.提案連続＿番号,LISTAGG(COALESCE(CONCAT(ee.明細契約変更内容＿コード＿０１,','),'')||COALESCE(CONCAT(ee.明細契約変更内容＿コード＿０２,','),'')||COALESCE(CONCAT(ee.明細契約変更内容＿コード＿０３,','),'')||COALESCE(CONCAT(ee.明細契約変更内容＿コード＿０４,','),'')) as 明細契約変更内容＿コード 
-               FROM 提案明細プラン．保険契約明細計上 ee 
-               INNER JOIN ON ee.契約管理区分キー＿英数カナ = d.契約管理区分キー＿英数カナ AND ee.提案設計データバージョン番号＿数 = d.提案設計データバージョン番号＿数 AND ee.提案案件＿番号 = d.提案案件＿番号 AND ee.提案案件番号枝番＿番号 = d.提案案件番号枝番＿番号 AND ee.提案連続＿番号 = d.提案連続＿番号 AND ee.提案案件補償プラン＿コード = d.提案案件補償プラン＿コード AND ee.保険契約明細＿番号 = d.保険契約明細＿番号
-               GROUP BY ee.契約管理区分キー＿英数カナ,ee.提案設計データバージョン番号＿数,ee.提案案件＿番号,ee.提案案件番号枝番＿番号,ee.提案連続＿番号,ee.提案案件補償プラン＿コード,ee.保険契約明細＿番号   
-            ) e
-      ON e.契約管理区分キー＿英数カナ = d.契約管理区分キー＿英数カナ AND e.提案設計データバージョン番号＿数  = d.提案設計データバージョン番号＿数 AND e.提案案件＿番号  = d.提案案件＿番号 AND e.提案案件番号枝番＿番号  = d.提案案件番号枝番＿番号 AND e.提案連続＿番号  = d.提案連続＿番号 AND e.提案案件補償プラン＿コード = d.提案案件補償プラン＿コード AND e.保険契約明細＿番号 = d.保険契約明細＿番号
+LEFT OUTER JOIN 提案明細プラン．保険契約明細計上 e1 ON e1.契約管理区分キー＿英数カナ = d.契約管理区分キー＿英数カナ AND e1.提案設計データバージョン番号＿数  = d.提案設計データバージョン番号＿数 AND e1.提案案件＿番号  = d.提案案件＿番号 AND e1.提案案件番号枝番＿番号  = d.提案案件番号枝番＿番号 AND e1.提案連続＿番号  = d.提案連続＿番号 AND e1.提案案件補償プラン＿コード = d.提案案件補償プラン＿コード AND e1.保険契約明細＿番号 = d.保険契約明細＿番号 AND e1.提案明細プラン＿コード = '001'
+LEFT OUTER JOIN 提案明細プラン．保険契約明細計上 e2 ON e2.契約管理区分キー＿英数カナ = d.契約管理区分キー＿英数カナ AND e2.提案設計データバージョン番号＿数  = d.提案設計データバージョン番号＿数 AND e2.提案案件＿番号  = d.提案案件＿番号 AND e2.提案案件番号枝番＿番号  = d.提案案件番号枝番＿番号 AND e2.提案連続＿番号  = d.提案連続＿番号 AND e2.提案案件補償プラン＿コード = d.提案案件補償プラン＿コード AND e2.保険契約明細＿番号 = d.保険契約明細＿番号 AND e2.提案明細プラン＿コード = '002'
+LEFT OUTER JOIN 提案明細プラン．保険契約明細計上 e3 ON e3.契約管理区分キー＿英数カナ = d.契約管理区分キー＿英数カナ AND e3.提案設計データバージョン番号＿数  = d.提案設計データバージョン番号＿数 AND e3.提案案件＿番号  = d.提案案件＿番号 AND e3.提案案件番号枝番＿番号  = d.提案案件番号枝番＿番号 AND e3.提案連続＿番号  = d.提案連続＿番号 AND e3.提案案件補償プラン＿コード = d.提案案件補償プラン＿コード AND e3.保険契約明細＿番号 = d.保険契約明細＿番号 AND e3.提案明細プラン＿コード = '003'
+
+
 WHERE 1 = 1
 [# th:unless=${#strings.isEmpty(req.ankenNumber)}]       AND a.提案案件＿番号          LIKE '%[[${req.ankenNumber}]]%'         [/]
 [# th:unless=${#strings.isEmpty(req.policyHolderName)}]  AND b.契約者氏名＿漢字        LIKE '%[[${req.policyHolderName}]]%'    [/]
 [# th:unless=${#strings.isEmpty(req.policyType)}]        AND d.保険契約保険種目＿コード =    '[[${req.policyType}]]'            [/]
 [# th:unless=${#strings.isEmpty(req.agentCode)}]         AND a.代理店＿コード          LIKE '%[[${req.agentCode}]]%'           [/]
-[# th:unless=${#strings.isEmpty(req.amendmentCode)}]     AND 契約変更内容＿コード      LIKE '%[[${req.amendmentCode}]]%'        [/]
+[# th:unless=${#strings.isEmpty(req.policyNumber)}]         AND a.証券＿番号          LIKE '%[[${req.policyNumber}]]%'           [/]
+[# th:unless=${#strings.isEmpty(req.amendmentCode)}]      AND c.契約新規変更訂正区分＿コード IN ('2','3','4') AND (
+  c.契約変更内容＿コード＿０１       LIKE '%[[${req.amendmentCode}]]%'    OR
+  c.契約変更内容＿コード＿０２       LIKE '%[[${req.amendmentCode}]]%'    OR
+  c.契約変更内容＿コード＿０３       LIKE '%[[${req.amendmentCode}]]%'    OR
+  c.契約変更内容＿コード＿０４       LIKE '%[[${req.amendmentCode}]]%'    OR
+  d.明細契約変更内容＿コード＿０１  LIKE '%[[${req.amendmentCode}]]%'   OR
+  d.明細契約変更内容＿コード＿０２  LIKE '%[[${req.amendmentCode}]]%'   OR
+  d.明細契約変更内容＿コード＿０３  LIKE '%[[${req.amendmentCode}]]%'   OR
+  d.明細契約変更内容＿コード＿０４  LIKE '%[[${req.amendmentCode}]]%'   OR
+  e1.明細契約変更内容＿コード＿０１  LIKE '%[[${req.amendmentCode}]]%'   OR
+  e1.明細契約変更内容＿コード＿０２  LIKE '%[[${req.amendmentCode}]]%'   OR
+  e1.明細契約変更内容＿コード＿０３  LIKE '%[[${req.amendmentCode}]]%'   OR
+  e1.明細契約変更内容＿コード＿０４  LIKE '%[[${req.amendmentCode}]]%'   OR
+  e2.明細契約変更内容＿コード＿０１  LIKE '%[[${req.amendmentCode}]]%'   OR
+  e2.明細契約変更内容＿コード＿０２  LIKE '%[[${req.amendmentCode}]]%'   OR
+  e2.明細契約変更内容＿コード＿０３  LIKE '%[[${req.amendmentCode}]]%'   OR
+  e2.明細契約変更内容＿コード＿０４  LIKE '%[[${req.amendmentCode}]]%'   OR
+  e3.明細契約変更内容＿コード＿０１  LIKE '%[[${req.amendmentCode}]]%'   OR
+  e3.明細契約変更内容＿コード＿０２  LIKE '%[[${req.amendmentCode}]]%'   OR
+  e3.明細契約変更内容＿コード＿０３  LIKE '%[[${req.amendmentCode}]]%'   OR
+  e3.明細契約変更内容＿コード＿０４  LIKE '%[[${req.amendmentCode}]]%'
+)       [/]
+[# th:unless=${#strings.isEmpty(req.userId)}]         AND a.データ登録ユーザーＩＤ＿英数カナ  LIKE '%[[${req.userId}]]%'           [/]
 
 ORDER BY a.提案案件＿番号 DESC
 [# th:if=${req.maxFetchRows}] FETCH FIRST  [[${req.maxFetchRows}]] ROWS ONLY[/]
+
+
+
+
+
+
+
+
+

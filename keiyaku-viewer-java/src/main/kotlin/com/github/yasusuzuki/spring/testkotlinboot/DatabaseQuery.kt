@@ -11,17 +11,12 @@ import org.thymeleaf.templateresolver.FileTemplateResolver
 import java.sql.Connection
 
 @Component
-class DatabaseQuery {
+class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) {
 
-    @Autowired
-    lateinit var db : Database
-    @Autowired
-    lateinit var d : Dictionary
-    @Autowired
-    lateinit var config: ConfigDef
-    @Autowired
-    lateinit var json: Json
-
+    /**
+     * テンプレートファイルもとにSQL文を組み立てる
+     * 論理項目名は物理項目名に変換する
+     */
     fun getSQL(templateName: String, req: Any): String {
         val resolver = FileTemplateResolver()
         resolver.prefix = ".\\templates\\"
@@ -80,14 +75,12 @@ class DatabaseQuery {
         var hideDBSystemColumns = true
         var displaySQL = false
         var displayPhysicalName = false
-        val functionVerboseModeFlag = callback["VERBOSE_MODE_FLAG"]
-        val functionHideDBSystemColumnsFlag = callback["HIDE_DB_SYSTEM_COLUMNS_FLAG"]
-        if  (functionVerboseModeFlag != null && functionVerboseModeFlag("", "", null,null) == "on") {
+        if  ( callback["VERBOSE_MODE_FLAG"]?.let{ it("", "", null,null) } == "on") {
             hideDBSystemColumns = false
             displaySQL = true
             displayPhysicalName = true
         }
-        if  (functionHideDBSystemColumnsFlag != null && functionHideDBSystemColumnsFlag("", "", null,null) == "on") {
+        if  ( callback["HIDE_DB_SYSTEM_COLUMNS_FLAG"]?.let{ it("", "", null,null) } == "off") {
             hideDBSystemColumns = false
         }
         if (displaySQL) {
@@ -180,5 +173,115 @@ class DatabaseQuery {
         html += "</TABLE><BR>\n"
 
         return html
+    }
+
+    /**
+     * 検索キー項目と値を集約し、SQLのWHERE句を組み立てるクラスQueryCriteriaのインスタンスを生成
+     */
+    fun queryCriteria():QueryCriteria {
+        return QueryCriteria(d)
+    }
+
+    /**
+     * 検索キー項目と値を集約し、SQLのWHERE句を組み立てるクラス
+     */
+    class QueryCriteria (val d:Dictionary ) {
+        /* ※当初inner classとして定義し、アウタークラスのDictionaryインスタンスを
+        * 参照させていたが、それだとテスト時にDatabaseQueryをモック化すると
+        * QueryCriteriaのアウタークラスインスタンスを参照できなくなってしまい、
+        * 結局inner classとせず、ネストクラスとしてコンストラクタにDictionaryインスタンスを渡す方式とした
+        * inner classではなくネストクラスとすると、外側クラスとの関係性が薄いので外に切り出してもいいのではないか
+        */  
+        private var pkv = mutableMapOf<String,MutableList<Any?>>()
+        fun put ( primaryKey:String, value:Any? ){
+            //主キーがNULLの可能性がある前提で、SetにNULLも許容しSet<Any?>型とする。
+            var valueList = pkv.get(primaryKey)
+            if ( valueList == null) {
+                valueList = mutableListOf(value)
+                pkv.put(primaryKey,valueList)
+            } else if ( value == null ) {
+                valueList.add(null)            
+            } else if ( valueList.first()?.let{ it::class } == value.let{ it::class } ) {
+                valueList.add(value)
+            } else {
+                throw Exception("検索キーとして利用する主キーの型が一貫していません。既に設定済みの型[%s] 追加する値の型[%s] ".
+                format(valueList.first()?.let{ it::class }, value.let{ it::class }))
+            }
+        }
+        
+        override fun toString():String{
+            return pkv.toString()
+        }
+        
+        /**
+         * 検索キーとして設定された値をもとにWHERE句を組み立てる
+         * 論理項目名は物理項目名に変換する
+         */
+        fun getSQLCondition(primaryKeysString:String) : String{
+            println("DEBUG getSQLCondition() pks=$primaryKeysString pkv=$pkv")
+            if ( primaryKeysString.isNullOrBlank()  ) { return " 1=1 "}
+            var pks = primaryKeysString.split("+")
+            //検索キーが１つ指定された場合(pks.size==1)も、複数指定された場合も後述の
+            //同じ汎用処理で可能だが、デバッグしやすいので検索キーが1つの場合の単純な処理も残しておく
+            if ( pks.size == 1 ) {
+                val values = pkv.get(pks.first())?.distinct() ?: mutableListOf<Any?>(null)
+                return "%s %s".format(d.L2P(pks.first()),formatCondition(values))
+            } else {
+                var conditions = mutableListOf<List<Pair<String,Any?>>>()
+                val maxLastIndex = pks.map { pkv.get(it) ?: mutableListOf<Any?>(null) }.maxOf{ it.lastIndex }
+                //後でdistinct()できるようにいったんPairクラスのリストを作成する
+                for ( index in 0..maxLastIndex ) {
+                    //検索キー１に保持された値の数　＞　検索キー２に保持された値の数　の場合
+                    //検索キー１の条件はそのまま生成し、検索キー２はNULLと同値かどうかの条件を生成する
+                    conditions += pks.map { it to pkv.get(it)?.elementAtOrNull(index) }
+                }
+                //SQLが簡潔になるように条件句の重複を排除しながら、ANDやORでつなぐ
+                val conditionsString = conditions.distinct().joinToString(
+                    separator = " OR ",
+                    transform = { it.joinToString(
+                        separator = " AND ",
+                        prefix = "(",
+                        postfix = ")",
+                        transform = { "%s %s".format(d.L2P(it.first),formatCondition(it.second)) })}    
+                    ) 
+                return conditionsString
+            }
+        }
+        
+        private fun formatSQLLiteral(value:Any?):String{
+            //TODO: Date型やタイムスタンプ型もこれでうまくいくか不明。後程調査する
+            if ( value == null ) {
+                return "NULL"
+            } else if ( value is String) {
+                return "'$value'"
+            } else {
+                return value.toString()
+            }
+        }
+
+        private fun formatCondition(value:Any?):String{
+            if ( value == null ) {
+                return "IS %s".format(formatSQLLiteral(value))
+            } else if ( value is String && value.contains("%") ) {
+                return "LIKE %s".format(formatSQLLiteral(value))
+            } else {
+                return "= %s".format(formatSQLLiteral(value))
+            }
+        }
+        
+        private fun formatCondition(values:List<Any?>):String{
+            if ( values.size == 1 ) {
+                return formatCondition(values[0])
+            } else {
+                var condition = "IN ("
+                for ( (i,v) in values.withIndex() ) {
+                    condition +=  formatSQLLiteral(v)
+                    if ( i != values.lastIndex ){ condition += "," }
+                }
+                condition += ")"
+                return condition
+            }
+        }
+
     }
 }

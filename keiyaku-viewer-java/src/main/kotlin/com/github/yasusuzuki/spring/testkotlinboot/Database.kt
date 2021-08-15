@@ -18,13 +18,8 @@ import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 @Component
-class Database {
+class Database(var appConfig: ConfigDef,var dic: Dictionary) {
     var logger: Logger = LoggerFactory.getLogger(Database::class.java)
-
-    @Autowired
-    lateinit var appConfig: ConfigDef
-    @Autowired
-    lateinit var dic: Dictionary
 
     lateinit var hikari: HikariDataSource
 
@@ -45,7 +40,7 @@ class Database {
     }
 
     @PostConstruct
-    fun init() {
+    fun postConstruct() {
         for (env in appConfig.dBConnections) {
             val envName = env["ENV"]
             var dbProduct = env["DB_SERVER_PRODUCT"]

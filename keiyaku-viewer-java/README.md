@@ -37,11 +37,14 @@
   * 参考：https://github.com/brettwooldridge/HikariCP/blob/HikariCP-3.4.5/src/main/java/com/zaxxer/hikari/pool/ProxyConnection.java
 * [  ] テスト環境をAccess DBからDB2（もしくはhsqldb)へ変更
 * [済] Requestをクラスで受け取ると、汎用性がない
+  * 各ページごとにRequestクラスを作成することにした。各Controllerクラス内で"Request"という内部クラス名とすることにし、統一性を持たせた
   * ``MultiValueMap<String,String>``で受け取れることがわかったが、Value部分が常にListになっていて参照する側がわかりにくい
   * https://qiita.com/yuji38kwmt/items/516d00fb7f0b360bd7c9
 ```Kotlin
+//こちらは廃案
 fun sql(@RequestParam req: MultiValueMap<String, String>, model:Model ): String? { ... }
 
+//こちらを採用
 data class Request
 fun sql(@RequestParam req:HashMap<String, String>, model:Model ): String? { ... }
 ```
@@ -87,6 +90,32 @@ fun sql(@RequestParam req:HashMap<String, String>, model:Model ): String? { ... 
    * GroupClientEnquiry.kt groupClientEnquiry.htmlの追加
 * [済] 代理店情報取得のための代理店詳細画面を開発
    * GroupClientEnquiry.kt groupClientEnquiry.htmlの追加 a
+* [済] 提案一覧や契約一覧で、システム項目を非表示にしてしまっていた問題を解決
+* [済] 提案一覧にデータ登録ユーザIDの検索項目を追加
+* [済] Utilクラス内の関数はすべてstaticなので、シングルトンクラスに変更した
+    * クラス定義の``class Util``を``object Util`` に修正
+    * クラス内の``companion object``を削除
+* [済] リファクタリング：べた書きにしていたSQLのWHERE条件を生成する処理をQueryCriteriaクラスにまとめた。
+* [済] リファクタリング：Field Injectionを辞めて、Constructor Injectionへ修正。
+* [済] リファクタリング：テストコードをJavaのMockitoを使わず、Kotlin-mockitoの関数に統一
+```
+修正前：
+        //以降は、テスト対象メソッドが内部でbuildHTMLFromSQL()を呼出した後
+        val sqlCaptor: ArgumentCaptor<String> = ArgumentCaptor.forClass(String::class.java)
+        verify(mockQuery,atLeastOnce()).buildHTMLFromSQL(capture(sqlCaptor),any())
+        assertThat(sqlCaptor.getValue()).isEqualTo("....")        
+修正後：
+        //以降は、テスト対象メソッドが内部でbuildHTMLFromSQL()を呼出した後        argumentCaptor<String>().apply {
+            verify(mockQuery,atLeastOnce()).buildHTMLFromSQL(capture(),any())
+            assertThat(lastValue).isEqualTo("SELECT * FROM Table1 WHERE 代理店＿コード = '12345'")
+        }
+※参考：https://qiita.com/wrongwrong/items/bf2fc29a63a848c041d0
+```
+* [済] リファクタリング：初期化処理をinit()からpostConstruct()に名前を変更。Kotlinのコンストラクタ名と被るため。
+* [  ] Loggerを統一する
+* [  ] BusinessTermを外に切り出す。
+
+
 
 
 

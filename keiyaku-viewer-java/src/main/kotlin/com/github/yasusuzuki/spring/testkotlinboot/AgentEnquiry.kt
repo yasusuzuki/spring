@@ -1,6 +1,5 @@
 package com.github.yasusuzuki.spring.testkotlinboot
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -10,7 +9,7 @@ import javax.annotation.PostConstruct
 
 
 @Controller
-class AgentEnquiry{
+class AgentEnquiry(var dic: Dictionary, var query: DatabaseQuery){
 
     data class Request(
         var agentCodeSubCode: String = "", 
@@ -20,11 +19,6 @@ class AgentEnquiry{
         var logicalTableName: String = "",
         var html: () -> String = {""}
     )
-
-    @Autowired
-    lateinit var query: DatabaseQuery
-    @Autowired
-    lateinit var dic: Dictionary
 
     @GetMapping("/agentEnquiry" )
     fun execute(@ModelAttribute req:Request, model:Model ): String {
@@ -38,9 +32,10 @@ class AgentEnquiry{
 
     lateinit var tableAndPrimaryKeys: List<Dictionary.TableDefinition>
     @PostConstruct
-    fun init(){
+    fun postConstruct(){
         tableAndPrimaryKeys = dic.listDBTables("代理店")
     }
+   
 
     fun buildDataTables(req: Request): MutableList<TableResultPair> {
         //先頭５桁をagentCodeに設定しagentSubCodeは未設定
@@ -50,30 +45,41 @@ class AgentEnquiry{
             agentSubCode = req.agentCodeSubCode.slice(5..req.agentCodeSubCode.lastIndex)
         }
 
+        var criteria = query.queryCriteria()
+        //画面入力された検索キー項目と値を設定する
+        criteria.put("代理店＿コード", agentCode)
+        criteria.put("代理店サブ＿コード", agentSubCode)
+
         //callback
         var callback = hashMapOf(
             "VERBOSE_MODE_FLAG" to fun(_:String?,_:String?,_:List<String>?,_:Map<String,Any?>?):String{
                 return if (req.verboseMode) {"on"} else {"off"}
             },
         )
+        //各テーブルを参照して得られた値のうち、後続のSQLの検索キーとして必要な値を保持するコールバック関数
+        var primaryKeysMappingFunc = fun(name:String?,value:String?,_:List<String>?,_:Map<String,Any?>?):String{
+            criteria.put(name!!, value)
+            return value?:"NULL"
+        }
+
+        //設定ファイルで主キーとして定義された項目に対して一律callbackを適用する
+        //ただし、画面入力される項目は、入力値以外で検索させないように抑止する
+        tableAndPrimaryKeys.forEach{ 
+            e1 -> e1.primaryKeysString.split("+").filter{it !in listOf("代理店＿コード","代理店サブ＿コード")}.forEach{
+                e2 -> callback.put(e2, primaryKeysMappingFunc )
+            }
+        }
         var dataTables : MutableList<TableResultPair> = mutableListOf()
         for ( e in tableAndPrimaryKeys ) {
             //Thymeleafのテンプレート処理まで実行を遅らせることで、すべての編集処理が終わる前
             //ブラウザの描画が始まるので体感処理速度があがる
             var html: () -> String
             if (req.agentCodeSubCode == "") {
-                html = {"<DIV CLASS='message_info'>団体コードなし</DIV>"}
+                html = {"<DIV CLASS='message_info'>代理店コードなし</DIV>"}
             } else {
                 html = {
-                    query.buildHTMLFromSQL(
-                            String.format("SELECT * FROM %s WHERE %s LIKE '%s' AND %s LIKE '%s'",
-                            dic.L2P(e.logicalTableName),
-                            dic.L2P("代理店＿コード"),
-                            agentCode,
-                            dic.L2P("代理店サブ＿コード"),
-                            agentSubCode,
-                            ),
-                    callback)
+                    var sql = "SELECT * FROM %s WHERE %s".format(dic.L2P(e.logicalTableName),criteria.getSQLCondition(e.primaryKeysString))
+                    query.buildHTMLFromSQL(sql,callback)
                 }
             }
             dataTables += TableResultPair(e.logicalTableName,html)

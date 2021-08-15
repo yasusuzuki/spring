@@ -10,7 +10,7 @@
 </head>
 
 <body>
-<h1> 契約DB一覧 </h1>
+<h1> 契約DB一覧(明細計上単位) </h1>
 
 <FORM NAME='QFORM' METHOD='GET' ACTION='/keiyakuList' >
     <TABLE CLASS='QueryForm'>
@@ -22,6 +22,7 @@
             <TD>変更内容:</TD>
             <TD ><select id="amendmentCode" name="amendmentCode" th:value="${req.amendmentCode}">
                 <option th:value="''" th:text="'全部'"     th:selected="${req.amendmentCode == ''}" ></option>
+                <option th:value="'%'" th:text="'変更・訂正・変更訂正'"     th:selected="${req.amendmentCode == '%'}" ></option>
                 <option th:each="item:${amendmentCodes}" th:value="${item.codeValue}" th:text="|${item.codeValue}:${item.codeName}|" th:selected="${req.amendmentCode == item.codeValue}"></option> 
             </select>
             </TD>

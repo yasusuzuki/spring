@@ -7,12 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class Dictionary {
-
-    @Autowired lateinit var config: ConfigDef
+class Dictionary (val config: ConfigDef) {
 
     @PostConstruct
-    fun init() {
+    fun postConstruct() {
         initCodeMaster()
         initL2PDictionary()
     }
@@ -44,7 +42,7 @@ class Dictionary {
 
     data class DomainPhysicalNamePair(val domain: String = "", val javaName: String = "", val physicalName: String = "")
     data class DomainLogicalNamePair(val domain: String = "", val logicalName: String = "")
-    data class TableDefinition(val dbName: String = "", val logicalTableName: String = "", val primaryKey: String = "")
+    data class TableDefinition(val dbName: String = "", val logicalTableName: String = "", val primaryKeysString: String = "")
     var L2PDBTables:MutableMap<String,String> = mutableMapOf()
     var L2PDictionary:MutableMap<String,DomainPhysicalNamePair> = mutableMapOf()
     var DBTables:MutableList<TableDefinition> = mutableListOf()
@@ -142,6 +140,12 @@ class Dictionary {
         return P2LDictionary[physicalName]?.logicalName ?: P2LDBTables[physicalName] ?: physicalName
     }
 
+    /**
+     * 論理項目名で記述されたSQLを物理項目名に変換する
+     * 前提：　論理項目名は必ずマルチバイトコードで構成していること
+     * 論理項目名かどうかは、日本語（マルチバイトコード）かどうかで判断し、L2P()を呼び出して解決する
+     * そのため、アルファベットで構成された論理項目名に対してはうまく動作しない
+     */
     @OptIn(ExperimentalStdlibApi::class)
     fun L2P_SQL(sqlLogical: String): String {
         var multiByteCharStart = false

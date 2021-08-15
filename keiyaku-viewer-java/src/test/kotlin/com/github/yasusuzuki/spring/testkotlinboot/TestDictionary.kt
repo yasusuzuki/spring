@@ -1,27 +1,23 @@
 package com.github.yasusuzuki.spring.testkotlinboot
 
-
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Assertions.assertEquals
 
 import assertk.assertThat
 import assertk.assertions.*
 
 class TestDictionary {
-
 	
 	fun initDictionaryFromCSVFiles():Dictionary {
 		var conf = ConfigDef()
-		var dic = Dictionary()
+		var dic = Dictionary(conf)
 		conf.dBConnections = listOf(mapOf("ENV" to "dummy env","DB_SERVER_PRODUCT" to "DB2"))
 		conf.dataDictionaryFilePath = ".\\data\\data_dictionary.csv"
 		conf.dBTableListFilePath = ".\\data\\db_tables.csv"
 		conf.codeMasterFilePath = ".\\data\\codemaster.csv"
-		conf.init()
-		dic.config = conf
-		dic.init() 
+		conf.postConstruct()
+		dic.postConstruct() 
 		return dic
 	}
 
@@ -45,9 +41,9 @@ class TestDictionary {
 
 	fun initDictionaryMock() : Dictionary {
 		var conf = ConfigDef()
-		var dic = Dictionary()
+		var dic = Dictionary(conf)
 		conf.dBConnections = listOf(mapOf("ENV" to "dummy env","DB_SERVER_PRODUCT" to "DB2"))
-		conf.init()
+		//conf.postConstruct()
 		dic.CodeMaster = linkedMapOf(
 			"domainA" to mutableListOf( 
 					Dictionary.CodeValueNamePair("1","name1"), 
@@ -64,7 +60,6 @@ class TestDictionary {
 			"項目１" to  Dictionary.DomainPhysicalNamePair("domainA","field1","FIELD_1"),
 			"テーブル１" to Dictionary.DomainPhysicalNamePair("---","---","TableX"),
 		)
-		dic.config = conf
 		return dic
 	}
 
@@ -72,24 +67,19 @@ class TestDictionary {
 	@Test
 	fun testDictionary() {
 		var dic = initDictionaryMock()
-		println("findDomain() 項目１=" + dic.lookupDomain("項目１"))
-		assertEquals("domainA", dic.lookupDomain("項目１"))
+		assertThat(dic.lookupDomain("項目１")).isEqualTo("domainA")
 
 		//未知の項目に対して、findDomain()はブランクを返却する
-		println("findDomain() 未知の項目=" + dic.lookupDomain("未知の項目"))
-		assertEquals("", dic.lookupDomain("未知の項目"), "error ")
+		assertThat(dic.lookupDomain("未知の項目")).isEqualTo("")
 
-		println("L2P() 項目１=" + dic.L2P("項目１"))
-		assertEquals("FIELD_1", dic.L2P("項目１"), "error ")
+		assertThat(dic.L2P("項目１")).isEqualTo("FIELD_1")
 
 		//未知の項目に対して、L2Pはそのまま返却する
-		println("L2P() 未知の項目=" + dic.L2P("未知の項目"))
-		assertEquals("未知の項目", dic.L2P("未知の項目"), "error ")
-
+		assertThat(dic.L2P("未知の項目")).isEqualTo("未知の項目")
 
 		val sql = "SELECT * FROM テーブル１ a WHERE a.項目１ LIKE ’%0004'="
 		println("\nL2P_SQL() " + sql + " ---> " + dic.L2P_SQL(sql))
-		assertEquals("SELECT * FROM TableX a WHERE a.FIELD_1 LIKE ’%0004'=", dic.L2P_SQL(sql), "error ")
+		assertThat(dic.L2P_SQL(sql)).isEqualTo("SELECT * FROM TableX a WHERE a.FIELD_1 LIKE ’%0004'=")
 
 	}
 }

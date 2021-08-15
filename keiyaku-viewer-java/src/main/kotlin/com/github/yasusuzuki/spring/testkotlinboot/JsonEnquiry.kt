@@ -1,6 +1,5 @@
 package com.github.yasusuzuki.spring.testkotlinboot
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -10,16 +9,12 @@ import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.multipart.MultipartFile
 
 @Controller
-class JsonEnquiry {
+class JsonEnquiry(var query: DatabaseQuery,var json: Json) {
 
     data class Request(
         val jsonFile: MultipartFile? = null, 
         val verboseMode: Boolean = false
     )
-    @Autowired
-    lateinit var query: DatabaseQuery
-    @Autowired
-    lateinit var json: Json
 
     data class TableResultPair(
         var logicalTableName: String = "",

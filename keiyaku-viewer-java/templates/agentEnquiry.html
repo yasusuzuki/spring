@@ -10,12 +10,12 @@
 </head>
 
 <BODY>
-<H1> 代理店詳細 </H1>
+<H1> 代理店詳細(！！試験運用中！！) </H1>
 <FORM NAME='QFORM' METHOD='GET' ACTION='/agentEnquiry'>
     <TABLE  CLASS='QueryForm'>
         <TR>
             <TD>代理店コード+代理店サブコード：</TD>
-            <TD><INPUT TYPE="text" ID="agentCodeSubcode" NAME="agentCodeSubcode" th:value="${req.agentCodeSubcode}"></TD>
+            <TD><INPUT TYPE="text" ID="agentCodeSubCode" NAME="agentCodeSubCode" th:value="${req.agentCodeSubCode}"></TD>
             <TD>冗長モード: </TD>
             <TD><INPUT TYPE='CHECKBOX' ID='verboseMode' NAME='verboseMode' th:checked="${req.verboseMode}" ></TD>
         </TR>

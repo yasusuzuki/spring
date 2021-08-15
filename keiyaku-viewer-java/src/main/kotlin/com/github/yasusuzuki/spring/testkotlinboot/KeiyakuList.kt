@@ -1,6 +1,5 @@
 package com.github.yasusuzuki.spring.testkotlinboot
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -8,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 
 @Controller
-class KeiyakuList {
+class KeiyakuList(var config: ConfigDef, var dic: Dictionary,var query: DatabaseQuery) {
     data class Request(
         var policyNumber: String = "",
         var policyHolderName: String = "",
@@ -18,13 +17,6 @@ class KeiyakuList {
         var amendmentCode: String = "",
         var environment: String = ""
     )
-    
-    @Autowired
-    lateinit var config: ConfigDef
-    @Autowired
-    lateinit var dic: Dictionary
-    @Autowired
-    lateinit var query: DatabaseQuery
     
     @GetMapping("/keiyakuList","/" )
     fun execute(@ModelAttribute req:Request, model:Model ): String {

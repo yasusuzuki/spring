@@ -1,6 +1,5 @@
 package com.github.yasusuzuki.spring.testkotlinboot
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -9,18 +8,12 @@ import org.springframework.web.bind.annotation.ModelAttribute
 
 
 @Controller
-class KeiyakuEnquiry {
+class KeiyakuEnquiry(var config: ConfigDef,var dic: Dictionary,var query: DatabaseQuery) {
     //policyNumberはリストで来る場合とそうでない場合があるが、SpringMVCがコンマ区切りのStringに変換してセットしてくれる
     data class Request(
         var policyNumber: String = "", //複数設定される場合は、コンマ区切りになる
         var verboseMode: Boolean = false
     )
-    @Autowired
-    lateinit var config: ConfigDef
-    @Autowired
-    lateinit var query: DatabaseQuery
-    @Autowired
-    lateinit var dic: Dictionary
 
     @GetMapping("/keiyakuEnquiry" )
     fun execute(@ModelAttribute req:Request, model:Model ): String {

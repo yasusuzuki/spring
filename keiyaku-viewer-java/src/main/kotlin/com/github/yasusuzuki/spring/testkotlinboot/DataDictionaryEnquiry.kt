@@ -1,6 +1,5 @@
 package com.github.yasusuzuki.spring.testkotlinboot
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -9,15 +8,12 @@ import org.springframework.web.bind.annotation.ModelAttribute
 
 
 @Controller
-class DataMasterEnquiry {
+class DataDictionaryEnquiry(var dic: Dictionary) {
     data class Request(
         var fieldLogicalName: String = "", 
         var fieldPhysicalName: String = "", 
         var maxFetchRows: Int = 500, 
     )
-
-    @Autowired
-    lateinit var dic: Dictionary
 
     @GetMapping("/dataDictionaryEnquiry" )
     fun execute(@ModelAttribute req:Request, model:Model ): String {
