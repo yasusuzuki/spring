@@ -1,10 +1,10 @@
 @echo off
 
-@rem Maven‚ğÀs‚·‚é‚Æ’x‚¢‚Ì‚ÅAŠÈ’P‚É‚¨‚µÀs‚·‚éƒoƒbƒ`ƒXƒNƒŠƒvƒg
-@rem mvn dependency:build-classpath‚Åo—Í‚µ‚½ƒNƒ‰ƒXƒpƒXˆê——‚ğ‚·‚×‚Äİ’è‚µ‚ÄÀs‚·‚é
-@rem ƒRƒ“ƒpƒCƒ‹‚ÉƒpƒX‚ğ’Ê‚·‚ÆkotlinƒRƒ“ƒpƒCƒ‰‚ªƒGƒ‰[‚É‚µ‚Ä‚µ‚Ü‚¤‚à‚Ì‚ª‚ ‚é‚Ì‚Å
-@rem ƒ‰ƒ“ƒ^ƒCƒ€ê—p‚Æ‚»‚êˆÈŠO‚Å•ª‚¯‚Ä‚¢‚é
-@rem ‚¿‚È‚İ‚ÉAƒRƒ“ƒpƒCƒ‹‚É•s—v‚ÈƒNƒ‰ƒXƒpƒX‚ğ’Ê‚µ‚Ä‚àA’Ê‚³‚È‚­‚Ä‚à‚ ‚Ü‚èƒRƒ“ƒpƒCƒ‹Às‘¬“x‚Í•Ï‚í‚ç‚È‚©‚Á‚½
+@rem Mavenï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½Æ’xï¿½ï¿½ï¿½Ì‚ÅAï¿½È’Pï¿½É‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½oï¿½bï¿½`ï¿½Xï¿½Nï¿½ï¿½ï¿½vï¿½g
+@rem mvn dependency:build-classpathï¿½Åoï¿½Í‚ï¿½ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½Xï¿½pï¿½Xï¿½ê——ï¿½ï¿½ï¿½ï¿½ï¿½×‚Äİ’è‚µï¿½Äï¿½ï¿½sï¿½ï¿½ï¿½ï¿½
+@rem ï¿½Rï¿½ï¿½ï¿½pï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½Éƒpï¿½Xï¿½ï¿½Ê‚ï¿½ï¿½ï¿½kotlinï¿½Rï¿½ï¿½ï¿½pï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½ï¿½ï¿½[ï¿½É‚ï¿½ï¿½Ä‚ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½Ì‚ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ï¿½
+@rem ï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½ï¿½ï¿½ï¿½pï¿½Æ‚ï¿½ï¿½ï¿½ÈŠOï¿½Å•ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
+@rem ï¿½ï¿½ï¿½È‚İ‚ÉAï¿½Rï¿½ï¿½ï¿½pï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½É•sï¿½vï¿½ÈƒNï¿½ï¿½ï¿½Xï¿½pï¿½Xï¿½ï¿½Ê‚ï¿½ï¿½Ä‚ï¿½ï¿½Aï¿½Ê‚ï¿½ï¿½È‚ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½Rï¿½ï¿½ï¿½pï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½xï¿½Í•Ï‚ï¿½ï¿½È‚ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 @rem required in compile time
@@ -93,16 +93,17 @@ SET CLASSPATH=%CLASSPATH%;C:\java\m2repo\junit\junit\4.13.1\junit-4.13.1.jar;
 SET CLASSPATH=%CLASSPATH%;C:\java\m2repo\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;
 SET CLASSPATH=%CLASSPATH%;.\target\kotlin-ic\test\classes;
 SET CLASSPATH=%CLASSPATH%;.\target\kotlin-ic\compile\classes;
+SET CLASSPATH=%CLASSPATH%;.\target\classes;
 
-@rem "call"‚ğg—p‚µ‚È‚¢‚ÆAkotlinc‚ÌÀsŒã‚É‚±‚ÌDOSƒoƒbƒ`‚ÌÀs‚ª~‚Ü‚Á‚Ä‚µ‚Ü‚¤B
+
 if "%1" == "compile" ( 
   echo "kotlinc compiling.."
   call kotlinc -classpath "%CLASSPATH%" test\TestMain.kt  -d target\kotlin-ic\test\classes
   echo "DONE compile"
 )
 
-@rem ÅŒã‚Ìƒpƒ‰ƒ[ƒ^‚Å‹ï‘Ì“I‚É‚µ‚½‚¢ƒeƒXƒgƒNƒ‰ƒX‚ğw’è‚·‚é
-echo "running jUnit.. "
-java -classpath "%CLASSPATH%;%RUNTIME_CLASSPATH%"  org.junit.runner.JUnitCore TestMain
+@rem echo "running jUnit.. "
+@rem java -classpath "%CLASSPATH%;%RUNTIME_CLASSPATH%"  org.junit.runner.JUnitCore TestMain
 
+java -classpath "%CLASSPATH%;%RUNTIME_CLASSPATH%"  MainKt
 

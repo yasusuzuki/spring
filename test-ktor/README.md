@@ -17,20 +17,20 @@
 
 == TODO ==
 
-* インジェクションの定義で、実装クラスのみを設定するだけでよいか？確認する
+* [済]インジェクションの定義で、実装クラスのみを設定するだけでよいか？確認する
         single { DatabaseImpl(get()) } 　　これでよい？
         singleBy<DatabaseImpl,Database>)()
         single { DatabaseImpl(get()) as Database } 
-
-* コンテナ管理コンポーネントは、KoinComponentを継承しなくてもよいか？確認する
+  * Beanの生成時は具体的な実装クラスのコンストラクタを呼ぶ、でよい。適宜 bindを使う。
+* [済] コンテナ管理コンポーネントは、KoinComponentを継承しなくてもよいか？確認する
   いまのところ、DatabaseやConfigはKoinComponentを継承しなくてもsingle{}で登録
   しておけばインジェクトしてくれている。
-
-* CSSやJSなどの静的ファイルの格納パスを指定する箇所が、これよりもっと良い方法はないか？
+  * インジェクトを受けるほうはKoinComponentを継承しなくてよい
+* [済] CSSやJSなどの静的ファイルの格納パスを指定する箇所が、これよりもっと良い方法はないか？
 　　var path = ClassLoader.getSystemClassLoader().getResource(".").getPath()
-
+  * resources()を使う
 * Databaseのモック実装を作成し、テスト実行時に簡単に実装をモックに差し替えられるか確認する
 
-* HTTP Requestパラメータをデシリアライズする。
+* [済]HTTP Requestパラメータをデシリアライズする。
 
 * 

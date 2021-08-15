@@ -6,13 +6,12 @@ import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.dsl.module
 import org.koin.test.KoinTestRule
-
 import org.koin.test.mock.MockProviderRule
 import org.koin.test.mock.declareMock
 
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
-
+import org.koin.core.Koin
 class TestMain :KoinTest {
     private val db by inject<Database>()
 
@@ -21,15 +20,13 @@ class TestMain :KoinTest {
      */
     @get:Rule
     val koinTestRule = KoinTestRule.create {
-        //printLogger(Level.DEBUG)
-        
         //Let Koin Container generate instances
         modules(module {
             // generate Config instance as singleton instance
             single { Config() } 
             //generate Config insntace as singleton instance
             //Let Koin Container pass appropriate instance as constructor
-            single { DatabaseImpl(get()) }  
+            single { DatabaseMock(get()) as Database}  
         })
     }
 
@@ -45,13 +42,14 @@ class TestMain :KoinTest {
 
     @Test
     fun testConnection() {
+        println( "db class = %s".format(db))
         //declare inserting mock into Database class
-        declareMock<Database> {
+        val dbmock = declareMock<Database> {
             given(connect()).will({println("Mock Database class execute connect() --- OK")})
         }
-        var result = "Hello world"
-        assertEquals("Hello world", result)
+        println( "db class = %s".format(dbmock))
         db.connect()
+        dbmock.connect()
     }
 
     @Test

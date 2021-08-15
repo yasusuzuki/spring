@@ -9,9 +9,9 @@
     <properties>
         <ktor_version>1.5.4</ktor_version>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin_version>1.4.21</kotlin_version>
+        <kotlin_version>1.5.20</kotlin_version>
         <logback_version>1.2.1</logback_version>
-        <koin_version>3.0.2</koin_version>
+        <koin_version>3.1.2</koin_version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
@@ -30,6 +30,17 @@
         </repository>
     </repositories>
     <dependencies>
+        <dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-reflect</artifactId>
+			<version>${kotlin_version}</version>
+		</dependency>
+        <dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-stdlib-common</artifactId>
+			<version>${kotlin_version}</version>
+		</dependency>
+        
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
@@ -63,38 +74,43 @@
             <version>${koin_version}</version>
             <scope>test</scope>
         </dependency> 
-        <dependency>
+        <dependency> 
             <groupId>io.ktor</groupId>
             <artifactId>ktor-server-tests</artifactId>
             <version>${ktor_version}</version>
             <scope>test</scope>
         </dependency>
-        <!--   mockito-kotlin is better, as 'when' is reserved for buil-in function in Kotlin.
-       but not mandatory 
-       https://qiita.com/rubytomato@github/items/525c12a6e786787784b1
-       <dependency>
-            <groupId>org.mockito.kotlin</groupId>
-            <artifactId>mockito-kotlin</artifactId>
-            <version>3.2.0</version>
-            <scope>test</scope>
-        </dependency>
- -->
-        <!--mockito-inlineを設定すると、final classやstatic methodをMock化できる
-            https://scache.hatenablog.com/entry/2020/08/05/235039 
-        -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
-            <version>3.10.0</version>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+            <version>4.13.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-test</artifactId>
+			<version>1.5.20-M1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.nhaarman.mockitokotlin2</groupId>
+			<artifactId>mockito-kotlin</artifactId>
+			<version>2.2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.willowtreeapps.assertk</groupId>
+			<artifactId>assertk-jvm</artifactId>
+			<version>0.24</version>
+			<scope>test</scope>
+		</dependency>
     </dependencies>
     <build>
-        <sourceDirectory>${project.basedir}/src</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
         <resources>
             <resource>
-                <directory>${project.basedir}/resources</directory>
+                <directory>${project.basedir}/src/main/resources</directory>
             </resource>
         </resources>
         <plugins>
@@ -131,6 +147,14 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <mainClass>io.ktor.server.netty.EngineMain</mainClass>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
