@@ -6,9 +6,11 @@ import org.junit.jupiter.api.DisplayName
 
 import assertk.assertThat
 import assertk.assertions.*
-
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 class TestDictionary {
-	
+	val log = LoggerFactory.getLogger(TestDictionary::class.java)
+
 	fun initDictionaryFromCSVFiles():Dictionary {
 		var conf = ConfigDef()
 		var dic = Dictionary(conf)
@@ -24,18 +26,16 @@ class TestDictionary {
 	@Test
 	fun test_DBテーブル定義がロードできたか(){
 		var dic = initDictionaryFromCSVFiles()
-		//println("＊　団体テーブル\n %s".format(dic.listDBTables("団体")))
-		//println("＊　契約テーブル\n %s".format(dic.listDBTables("契約")))
-		//println("＊　提案テーブル\n %s".format(dic.listDBTables("提案")))
+
 
 		assertThat(dic.listDBTables("契約")).contains(Dictionary.TableDefinition("契約","保険契約","INPUT"))
 		assertThat(dic.L2P("保険契約")).isEqualTo("TB000570")
-		assertThat(dic.listDBTables("提案")).contains(Dictionary.TableDefinition("提案","提案","INPUT"))
+		assertThat(dic.listDBTables("提案")).contains(Dictionary.TableDefinition("提案","提案","提案案件＿番号+提案案件番号枝番＿番号+提案連続＿番号+提案設計データバージョン番号＿数"))
 		assertThat(dic.L2P("提案")).isEqualTo("TB001340")
 		assertThat(dic.listDBTables("団体")).contains(Dictionary.TableDefinition("団体","集金契約基本","集金契約書集約＿コード"))
 		assertThat(dic.L2P("団体基本")).isEqualTo("TB015450")
 
-		println("P2L() insuranceContractAgentFreedomMentionFieldKubunCd=" + dic.P2L("insuranceContractAgentFreedomMentionFieldKubunCd"))
+		log.info("P2L() insuranceContractAgentFreedomMentionFieldKubunCd=" + dic.P2L("insuranceContractAgentFreedomMentionFieldKubunCd"))
 		assert(dic.P2L("insuranceContractAgentFreedomMentionFieldKubunCd") != "")
 	}
 
@@ -78,7 +78,7 @@ class TestDictionary {
 		assertThat(dic.L2P("未知の項目")).isEqualTo("未知の項目")
 
 		val sql = "SELECT * FROM テーブル１ a WHERE a.項目１ LIKE ’%0004'="
-		println("\nL2P_SQL() " + sql + " ---> " + dic.L2P_SQL(sql))
+		log.info("\nL2P_SQL() " + sql + " ---> " + dic.L2P_SQL(sql))
 		assertThat(dic.L2P_SQL(sql)).isEqualTo("SELECT * FROM TableX a WHERE a.FIELD_1 LIKE ’%0004'=")
 
 	}

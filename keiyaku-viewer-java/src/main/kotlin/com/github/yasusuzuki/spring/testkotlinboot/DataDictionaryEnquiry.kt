@@ -5,10 +5,13 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
-
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 @Controller
 class DataDictionaryEnquiry(var dic: Dictionary) {
+    val log = LoggerFactory.getLogger(DataDictionaryEnquiry::class.java)
+
     data class Request(
         var fieldLogicalName: String = "", 
         var fieldPhysicalName: String = "", 
@@ -17,7 +20,7 @@ class DataDictionaryEnquiry(var dic: Dictionary) {
 
     @GetMapping("/dataDictionaryEnquiry" )
     fun execute(@ModelAttribute req:Request, model:Model ): String {
-        println("Process dataDictionaryEnquiry:  req = $req")
+        log.info("Process dataDictionaryEnquiry:  req = $req")
         
     	//１．　HTTPリクエストパラメータを解析する
         //TODO: rtrimはNULLも返却する可能性がある。ここではNULLはありえないのでrtrimとは別の関数を用意する

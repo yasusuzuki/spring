@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import javax.annotation.PostConstruct
 
-
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 @Controller
 class GroupClientEnquiry(var query: DatabaseQuery, var dic: Dictionary){
+    val log = LoggerFactory.getLogger(GroupClientEnquiry::class.java)
 
     data class Request(
         var groupClientCode: String = "", 
@@ -23,7 +25,7 @@ class GroupClientEnquiry(var query: DatabaseQuery, var dic: Dictionary){
 
     @GetMapping("/groupClientEnquiry" )
     fun execute(@ModelAttribute req:Request, model:Model ): String {
-        println("Process groupClientEnquiry:  req = $req")
+        log.info("Process groupClientEnquiry:  req = $req")
         var dataTables = buildDataTables(req)
         model["dataTables"] =  dataTables
         model["appName"] = "Keiyaku Viewer"

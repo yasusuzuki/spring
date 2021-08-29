@@ -5,9 +5,13 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
-
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 @Controller
 class KeiyakuList(var config: ConfigDef, var dic: Dictionary,var query: DatabaseQuery) {
+    val log = LoggerFactory.getLogger(KeiyakuList::class.java)
+
+
     data class Request(
         var policyNumber: String = "",
         var policyHolderName: String = "",
@@ -20,7 +24,7 @@ class KeiyakuList(var config: ConfigDef, var dic: Dictionary,var query: Database
     
     @GetMapping("/keiyakuList","/" )
     fun execute(@ModelAttribute req:Request, model:Model ): String {
-        println("Process keiyakuList:  req = ${req}")
+        log.info("Process keiyakuList:  req = ${req}")
         
         //環境をスイッチ
         config.setCurrentEnvironment(req.environment)
@@ -67,7 +71,7 @@ class KeiyakuList(var config: ConfigDef, var dic: Dictionary,var query: Database
                 var agentCode = values?.get("代理店＿コード")
                 var agentSubCode = values?.get("代理店サブ＿コード")
                 return if ( agentCode != null && agentSubCode != null ) { 
-                    "<A HREF='/agentEnquiry?agentCodeSubCode=" + agentCode + agentSubCode + "'>" + agentCode + '-' + agentSubCode + "</A>"
+                    "<A HREF='/agentEnquiry?agentCodeSubCode=${agentCode}-${agentSubCode}'>${agentCode}-${agentSubCode}</A>"
                 } else if ( agentCode != null ) {
                     "<A HREF='/agentEnquiry?agentCodeSubCode=" + agentCode +  "'>" + agentCode + "</A>"
                 } else {

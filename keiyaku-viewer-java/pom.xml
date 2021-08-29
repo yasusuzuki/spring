@@ -20,6 +20,13 @@
 		<!-- E0003 kotlin incremental compiler to improve build performance -->
 		<kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 	</properties>
+	<repositories>
+		<repository> 
+			<id>repository.spring.release</id> 
+			<name>Spring GA Repository</name> 
+			<url>http://repo.spring.io/release</url> 
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

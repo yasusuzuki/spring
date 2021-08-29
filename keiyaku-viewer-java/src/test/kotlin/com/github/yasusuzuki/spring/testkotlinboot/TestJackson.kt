@@ -39,7 +39,7 @@ class TestJackson {
             var sqlResultSet = Database.SQLResultSet(columnList,records)
             //var out = 
             "<h1>$tableName</h1>" + dq.buildHTML(sqlResultSet,"",mapOf())
-            //println(out)
+           
         }
     }
 }

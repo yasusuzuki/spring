@@ -5,8 +5,11 @@ import org.junit.jupiter.api.Test
 import assertk.assertThat
 import assertk.assertions.*
 import kotlin.assert
-
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 class TestKotlin {
+    val log = LoggerFactory.getLogger(TestKotlin::class.java)
+
     data class MVD (
         var x:Int=1,
         var y:Int=2,
@@ -20,7 +23,7 @@ class TestKotlin {
     @Test
     fun testLambda() {
         var num = 2
-        var a = {println("OK")}  //Lambda with no parameters
+        var a = {log.info("OK")}  //Lambda with no parameters
         //var b = {x -> x*x}     //Labmda with 1 parameter. Compile Error: because type cannot be inferred       
         var b = num.let{ x -> x*x }  //Lambda with 1 parameter. type can be inferred
         var c = {x:Int -> x*x}
@@ -41,9 +44,9 @@ class TestKotlin {
 
     fun testDestructingDeclaration(){
         var (a,b,c) = listOf(1,2,3)
-        println("$a $b $c")
+        log.info("$a $b $c")
         var (aa,bb,cc) = destructingReturn()
-        println("$aa $bb $cc")
+        log.info("$aa $bb $cc")
     }
 }
 

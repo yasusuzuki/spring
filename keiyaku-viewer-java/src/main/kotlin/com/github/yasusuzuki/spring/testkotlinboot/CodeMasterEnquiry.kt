@@ -7,9 +7,12 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 
-
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 @Controller
 class CodeMasterEnquiry(var dic: Dictionary) {
+    val log = LoggerFactory.getLogger(CodeMasterEnquiry::class.java)
+
     data class Request(
         var domain: String = "", 
         var codeValue: String = "", 
@@ -19,7 +22,7 @@ class CodeMasterEnquiry(var dic: Dictionary) {
 
     @GetMapping("/codeMasterEnquiry" )
     fun execute(@ModelAttribute req:Request, model:Model ): String {
-        println("Process codeMasterEnquiry:  req = $req")
+        log.info("Process codeMasterEnquiry:  req = $req")
         
     	//１．　HTTPリクエストパラメータを解析する
         //TODO: rtrimはNULLも返却する可能性がある。ここではNULLはありえないのでrtrimとは別の関数を用意する
@@ -40,7 +43,6 @@ class CodeMasterEnquiry(var dic: Dictionary) {
             //検索条件と部分一致でも抽出できるようにindexOf()を用いる
             if ( domain.indexOf(req.domain) != -1 ) { //req.Domainがブランクの場合は常に真
                 for ( m  in dic.CodeMaster[domain]!! ) {
-                    //DEBUG: println("codeName ${m.codeName}")
                     if ( (req.codeValue == "" || req.codeValue == m.codeValue) &&
                         (req.codeName == "" || m.codeName.indexOf(req.codeName) != -1 ) ) {
                         list.add(DomainValueNameTriple(domain, m.codeValue, m.codeName))

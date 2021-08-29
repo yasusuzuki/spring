@@ -3,8 +3,11 @@ package com.github.yasusuzuki.spring.testkotlinboot
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
 import kotlin.test.assertEquals
-
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 class TestConfigDef {
+    val log = LoggerFactory.getLogger(TestConfigDef::class.java)
+
     var conf = ConfigDef()
 
     @BeforeEach
@@ -14,9 +17,9 @@ class TestConfigDef {
             mapOf("ENV" to "dummy env2","DB_SERVER_PRODUCT" to "ACCESS_VIA_ODBC"),
             )
         for( env in conf.dBConnections ) {
-            println("Env = " + env);
+            log.info("Env = " + env);
             for ( (k,v) in env ) {
-                println( "        " + k + "=" + v );
+                log.info( "        " + k + "=" + v );
             }
         }
         conf.setCurrentEnvironment("dummy env1")

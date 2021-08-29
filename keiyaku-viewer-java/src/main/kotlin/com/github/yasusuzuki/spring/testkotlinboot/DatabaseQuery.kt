@@ -9,9 +9,11 @@ import org.thymeleaf.templatemode.TemplateMode
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import org.thymeleaf.templateresolver.FileTemplateResolver
 import java.sql.Connection
-
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 @Component
 class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) {
+    val log = LoggerFactory.getLogger(DatabaseQuery::class.java)
 
     /**
      * テンプレートファイルもとにSQL文を組み立てる
@@ -149,25 +151,27 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
                 }
                 //logger.debug("record = ${record}, column = ${column}")
                 val origVal : Any? = record[column]  //DBから取得した生の値は文字型、数値型、日付型などさまざま
-                var value = Util.rtrim(origVal)
+
+                val callbackForColumn = callback[column]
+                var value1 = Util.rtrim(origVal)
+                if (callbackForColumn != null) {
+                    value1 = callbackForColumn(column, value1, result.columnList, record) + "</TD>"
+                }
+
                 //"＿コード"で終わる列名はコードマスタ対象データ項目とみなし、コード値名称を添えて表示
                 if ( column.indexOf("＿コード") != -1 )  {
-                    val codeName = d.findCodeName(column, value)
+                    val codeName = d.findCodeName(column, value1)
                     if (codeName != "") {
-                        value = value + "<SPAN CLASS='CODE_NAME'>[" + codeName + "]</SPAN>"
+                        value1 = value1 + "<SPAN CLASS='CODE_NAME'>[" + codeName + "]</SPAN>"
                     }
                 }
-                val callbackForColumn = callback[column]
-                if (callbackForColumn != null) {
-                    html += "<TD>" + callbackForColumn(column, value, result.columnList, record) + "</TD>"
+                if (value1 == null) {
+                    html += "<TD><SPAN CLASS='NULL'>NULL</SPAN></TD>"
                 } else {
-                    if (record[column] == null) {
-                        html += "<TD><SPAN CLASS='NULL'>NULL</SPAN></TD>"
-                    } else {
-                        html += String.format("<TD>%s</TD>",value)
-                    }
+                    html += String.format("<TD>%s</TD>",value1)
+                }
+                
             }
-        }
             html += "</TR>\n"
         }
         html += "</TABLE><BR>\n"
@@ -186,6 +190,8 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
      * 検索キー項目と値を集約し、SQLのWHERE句を組み立てるクラス
      */
     class QueryCriteria (val d:Dictionary ) {
+        val log = LoggerFactory.getLogger(QueryCriteria::class.java)
+
         /* ※当初inner classとして定義し、アウタークラスのDictionaryインスタンスを
         * 参照させていたが、それだとテスト時にDatabaseQueryをモック化すると
         * QueryCriteriaのアウタークラスインスタンスを参照できなくなってしまい、
@@ -193,6 +199,11 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
         * inner classではなくネストクラスとすると、外側クラスとの関係性が薄いので外に切り出してもいいのではないか
         */  
         private var pkv = mutableMapOf<String,MutableList<Any?>>()
+
+
+        /**
+         * * 検索キー項目と検索値をセットする
+         */
         fun put ( primaryKey:String, value:Any? ){
             //主キーがNULLの可能性がある前提で、SetにNULLも許容しSet<Any?>型とする。
             var valueList = pkv.get(primaryKey)
@@ -208,6 +219,22 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
                 format(valueList.first()?.let{ it::class }, value.let{ it::class }))
             }
         }
+
+        /**
+         * 検索キー項目と検索値をセットする
+         * value１つで、ハイフンで区切られた複数の別々のキーを表している場合
+         */
+        
+        fun putMultiple ( primaryKeysString:String, valueString:String, delimiter:String ){
+            var pks = primaryKeysString.split("+")
+            var values = valueString.split(delimiter)
+            require( pks.size >= values.size) {"the count of primaryKeysString should be greater than that of valueString,but was $pks and $values"}
+
+            for ( (i,pk) in pks.withIndex()) {
+                put(pk, values.getOrNull(i)) 
+            }
+        }
+        
         
         override fun toString():String{
             return pkv.toString()
@@ -218,21 +245,23 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
          * 論理項目名は物理項目名に変換する
          */
         fun getSQLCondition(primaryKeysString:String) : String{
-            println("DEBUG getSQLCondition() pks=$primaryKeysString pkv=$pkv")
+            log.info("DEBUG getSQLCondition() pks=$primaryKeysString pkv=$pkv")
             if ( primaryKeysString.isNullOrBlank()  ) { return " 1=1 "}
             var pks = primaryKeysString.split("+")
             //検索キーが１つ指定された場合(pks.size==1)も、複数指定された場合も後述の
             //同じ汎用処理で可能だが、デバッグしやすいので検索キーが1つの場合の単純な処理も残しておく
             if ( pks.size == 1 ) {
-                val values = pkv.get(pks.first())?.distinct() ?: mutableListOf<Any?>(null)
-                return "%s %s".format(d.L2P(pks.first()),formatCondition(values))
+                val values = pkv.get(pks.first())?.distinct() ?: return "1 = 2"
+                return "%s".format(formatCondition(d.L2P(pks.first()),values))
             } else {
                 var conditions = mutableListOf<List<Pair<String,Any?>>>()
-                val maxLastIndex = pks.map { pkv.get(it) ?: mutableListOf<Any?>(null) }.maxOf{ it.lastIndex }
                 //後でdistinct()できるようにいったんPairクラスのリストを作成する
+                val maxLastIndex = pks.mapNotNull { pkv.get(it)?.lastIndex }.maxOrNull()
+                log.info("maxLastIndex = $maxLastIndex")
+                if ( maxLastIndex == null ) { return "1 = 2"}
                 for ( index in 0..maxLastIndex ) {
                     //検索キー１に保持された値の数　＞　検索キー２に保持された値の数　の場合
-                    //検索キー１の条件はそのまま生成し、検索キー２はNULLと同値かどうかの条件を生成する
+                    //検索キー１の条件はそのまま生成し、検索キー２は検索条件を"1=1"にする
                     conditions += pks.map { it to pkv.get(it)?.elementAtOrNull(index) }
                 }
                 //SQLが簡潔になるように条件句の重複を排除しながら、ANDやORでつなぐ
@@ -242,11 +271,37 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
                         separator = " AND ",
                         prefix = "(",
                         postfix = ")",
-                        transform = { "%s %s".format(d.L2P(it.first),formatCondition(it.second)) })}    
+                        transform = { "%s".format(formatCondition(d.L2P(it.first),it.second)) })}    
                     ) 
                 return conditionsString
             }
         }
+
+
+        private fun formatCondition(field:String, value:Any?):String{
+            if ( value == null ) {
+                return "1 = 1"
+            } else if ( value is String && value.contains("%") ) {
+                return "%s LIKE %s".format(field,formatSQLLiteral(value))
+            } else {
+                return "%s = %s".format(field,formatSQLLiteral(value))
+            }
+        }
+        
+        private fun formatCondition(field:String, values:List<Any?>):String{
+            if ( values.size == 1 ) {
+                return formatCondition(field,values[0])
+            } else {
+                var condition = "$field IN ("
+                for ( (i,v) in values.withIndex() ) {
+                    condition +=  formatSQLLiteral(v)
+                    if ( i != values.lastIndex ){ condition += "," }
+                }
+                condition += ")"
+                return condition
+            }
+        }
+
         
         private fun formatSQLLiteral(value:Any?):String{
             //TODO: Date型やタイムスタンプ型もこれでうまくいくか不明。後程調査する
@@ -257,31 +312,7 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
             } else {
                 return value.toString()
             }
-        }
-
-        private fun formatCondition(value:Any?):String{
-            if ( value == null ) {
-                return "IS %s".format(formatSQLLiteral(value))
-            } else if ( value is String && value.contains("%") ) {
-                return "LIKE %s".format(formatSQLLiteral(value))
-            } else {
-                return "= %s".format(formatSQLLiteral(value))
-            }
-        }
-        
-        private fun formatCondition(values:List<Any?>):String{
-            if ( values.size == 1 ) {
-                return formatCondition(values[0])
-            } else {
-                var condition = "IN ("
-                for ( (i,v) in values.withIndex() ) {
-                    condition +=  formatSQLLiteral(v)
-                    if ( i != values.lastIndex ){ condition += "," }
-                }
-                condition += ")"
-                return condition
-            }
-        }
+        }        
 
     }
 }

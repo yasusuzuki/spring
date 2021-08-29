@@ -7,9 +7,13 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.junit.jupiter.api.Test
 import assertk.assertThat
 import assertk.assertions.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 @SpringBootTest
 class TestSpringInjection {
+    val log = LoggerFactory.getLogger(ConfigDef::class.java)
+
     @Autowired
     lateinit var conf : ConfigDef
     @Autowired
@@ -17,8 +21,8 @@ class TestSpringInjection {
 
     @Test
     public fun testSetCurrentEnvironment(){
-        println("Autowired component ConfigDef $conf")
-        println("Autowired component Dictionary $dic")
+        log.info("Autowired component ConfigDef $conf")
+        log.info("Autowired component Dictionary $dic")
         assertThat(conf).isNotNull()
         assertThat(dic).isNotNull()
         assertThat(dic.config).isNotNull()

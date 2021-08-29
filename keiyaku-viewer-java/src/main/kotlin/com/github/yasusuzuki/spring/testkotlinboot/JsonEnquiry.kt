@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.multipart.MultipartFile
-
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 @Controller
 class JsonEnquiry(var query: DatabaseQuery,var json: Json) {
+    val log = LoggerFactory.getLogger(JsonEnquiry::class.java)
 
     data class Request(
         val jsonFile: MultipartFile? = null, 
@@ -32,7 +34,7 @@ class JsonEnquiry(var query: DatabaseQuery,var json: Json) {
 
     @PostMapping("/jsonEnquiry")
     fun execute(@ModelAttribute req:Request, model:Model ): String {
-        println("Process jsonEnquiry:  req = $req")
+        log.info("Process jsonEnquiry:  req = $req")
         var jsonString = "{}"
         if ( req.jsonFile != null ) {
             jsonString = req.jsonFile.getInputStream().bufferedReader().use{it.readText()}

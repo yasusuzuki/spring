@@ -112,9 +112,17 @@ fun sql(@RequestParam req:HashMap<String, String>, model:Model ): String? { ... 
 ※参考：https://qiita.com/wrongwrong/items/bf2fc29a63a848c041d0
 ```
 * [済] リファクタリング：初期化処理をinit()からpostConstruct()に名前を変更。Kotlinのコンストラクタ名と被るため。
-* [  ] Loggerを統一する
-* [  ] BusinessTermを外に切り出す。
-
+* [済] Loggerを統一する
+  * すべてのprintlnをlog.info()に変更。logback.xmlとlogback-test.xmlの設定を追加。
+* [  ] BusinessTermを外に切り出す。SQLはさすがにBusinessTermをきりだせない
+* [済] 提案詳細画面：提案枝番も検索キーとして追加する
+* [済] 提案詳細画面：最新の提案設計データバージョン番号＿数のみ表示する
+  * 提案設計情報など、データバージョンを持たないケースもある
+  * 提案設計情報、枝番、連続番号、データバージョンをハイフンでつなぎ、さらに、コンマ区切りで複数案件対応できるようにQueryCriteriaを修正
+* [  ] 案：詳細画面の先頭のリンクをプルダウンにして、各エンティティへジャンプできるようにする
+* [  ] 案：取引口座エンティティ詳細ページ作成
+* [  ] 案：代理店コード・サブコードのように１カラムに統合した場合、サブコードのカラムを非表示にしたい
+* [  ] keiyakuListSQL.txtの明細エンティティが、明細のみ変更の場合に抽出できないが、そんなことはありえるか？
 
 
 

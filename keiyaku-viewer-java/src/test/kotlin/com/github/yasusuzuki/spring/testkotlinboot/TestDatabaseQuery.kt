@@ -14,8 +14,11 @@ import org.mockito.kotlin.argThat
 
 import assertk.assertThat
 import assertk.assertions.*
-
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 class TestDatabaseQuery {
+    val log = LoggerFactory.getLogger(TestDatabaseQuery::class.java)
+
     lateinit var mockDic : Dictionary
     lateinit var query : DatabaseQuery
     @BeforeEach
@@ -36,7 +39,7 @@ class TestDatabaseQuery {
         app.put("PK1", null)
         app.put("PK1", "def")
         app.put("PK1", "abc")
-        println("testSimple: condition=[$app]")
+        log.info("testSimple: condition=[$app]")
         assertThat(app.getSQLCondition("PK1")).isEqualTo("PK1 IN ('abc',NULL,'def')")
     }
 
@@ -54,10 +57,10 @@ class TestDatabaseQuery {
         listOf("PK1" to "abc", "PK1" to null, "PK1" to "def", "PK1" to "abc",
                "PK2" to 123, "PK2" to 456, "PK2" to 789, "PK2" to 12)
         .forEach { app.put(it.first,it.second) }
-        println("testMultiplePrimaryKeys: condition=[$app]")
+        log.info("testMultiplePrimaryKeys: condition=[$app]")
 
         assertThat(app.getSQLCondition("PK1+PK2")).isEqualTo(
-        "(PK1 = 'abc' AND PK2 = 123) OR (PK1 IS NULL AND PK2 = 456) OR (PK1 = 'def' AND PK2 = 789) OR (PK1 = 'abc' AND PK2 = 12)"
+        "(PK1 = 'abc' AND PK2 = 123) OR (1 = 1 AND PK2 = 456) OR (PK1 = 'def' AND PK2 = 789) OR (PK1 = 'abc' AND PK2 = 12)"
         )
     }
 
@@ -67,38 +70,52 @@ class TestDatabaseQuery {
         listOf("PK1" to "abc", "PK1" to null, "PK1" to "def", "PK1" to "abc",
                "PK2" to 123, "PK2" to 456, "PK2" to 789)
         .forEach { app.put(it.first,it.second) }
-        println("testDifferentSize: condition=[$app]")
+        log.info("testDifferentSize: condition=[$app]")
 
         assertThat(app.getSQLCondition("PK1+PK2")).isEqualTo(
-        "(PK1 = 'abc' AND PK2 = 123) OR (PK1 IS NULL AND PK2 = 456) OR (PK1 = 'def' AND PK2 = 789) OR (PK1 = 'abc' AND PK2 IS NULL)"
+        "(PK1 = 'abc' AND PK2 = 123) OR (1 = 1 AND PK2 = 456) OR (PK1 = 'def' AND PK2 = 789) OR (PK1 = 'abc' AND 1 = 1)"
         )
     }
 
     @Test
     fun testMultipleNullKeys() {
         var app = query.queryCriteria()
-        println("testMultipleNullKeys: condition=[$app]")
+        log.info("testMultipleNullKeys: condition=[$app]")
 
         assertThat(app.getSQLCondition("PK1+PK2")).isEqualTo(
-        "(PK1 IS NULL AND PK2 IS NULL)"
+        "1 = 2"
         )
     }
     @Test
     fun testNullKey() {
         var app = query.queryCriteria()
-        println("testNullKey: condition=[$app]")
+        log.info("testNullKey: condition=[$app]")
 
         assertThat(app.getSQLCondition("PK1")).isEqualTo(
-        "PK1 IS NULL"
+        "1 = 2"
         )
     }
     @Test
     fun testBlankParameter() {
         var app = query.queryCriteria()
-        println("testBlankParameter: condition=[$app]")
+        log.info("testBlankParameter: condition=[$app]")
 
         assertThat(app.getSQLCondition("")).isEqualTo(
         " 1=1 "
         )
     }
+
+    @Test
+    fun testPutMultiple() {
+        var app = query.queryCriteria()
+        listOf("12345-678", "12345", "12345-000")
+        .forEach { app.putMultiple("PK1+PK2",it,"-") }        
+        log.info("testBlankParameter: condition=[$app]")
+
+        assertThat(app.getSQLCondition("PK1+PK2")).isEqualTo(
+        "(PK1 = '12345' AND PK2 = '678') OR (PK1 = '12345' AND 1 = 1) OR (PK1 = '12345' AND PK2 = '000')"
+        )
+    }
+
+
 }

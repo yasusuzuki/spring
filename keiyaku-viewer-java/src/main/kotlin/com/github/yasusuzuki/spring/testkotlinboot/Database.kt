@@ -1,25 +1,28 @@
 package com.github.yasusuzuki.spring.testkotlinboot
 
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import javax.annotation.PostConstruct
+
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
-import javax.annotation.PostConstruct
 import javax.sql.DataSource
+
 import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
+
 @Component
 class Database(var appConfig: ConfigDef,var dic: Dictionary) {
-    var logger: Logger = LoggerFactory.getLogger(Database::class.java)
+    var log = LoggerFactory.getLogger(Database::class.java)
 
     lateinit var hikari: HikariDataSource
 
@@ -63,7 +66,7 @@ class Database(var appConfig: ConfigDef,var dic: Dictionary) {
             env["PORT"],
             env["DATABASE"]
         )
-        println("Connecting To $jdbcUrl")
+        log.info("Connecting To $jdbcUrl")
         config.jdbcUrl = jdbcUrl
         config.username = env["UID"]
         config.password = env["PWD"]
@@ -89,7 +92,7 @@ class Database(var appConfig: ConfigDef,var dic: Dictionary) {
             env["DB"],
             folder.resolve("cache")
         )
-        println("Env " + env["ENV"] + " Connecting to " + jdbcUrl)
+        log.info("Env " + env["ENV"] + " Connecting to " + jdbcUrl)
         config.jdbcUrl = jdbcUrl
         hikari = HikariDataSource(config)
         return hikari
@@ -127,9 +130,9 @@ class Database(var appConfig: ConfigDef,var dic: Dictionary) {
         lateinit var rt : ResultSet
         lateinit var stmt : Statement
         try {
-            logger.info("Connecting to -- $con")
+            log.info("Connecting to -- $con")
             stmt = con.createStatement()
-            logger.info("Executing SQL -- $sql")
+            log.info("Executing SQL -- $sql")
             rt = stmt.executeQuery(sql)
             val numOfColumns = rt.metaData.columnCount
             for (i in 1..numOfColumns) { //SQL ResultSetの列は１から始まるので注意

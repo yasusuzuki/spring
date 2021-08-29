@@ -6,8 +6,12 @@ import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 @Component
 class Dictionary (val config: ConfigDef) {
+    val log = LoggerFactory.getLogger(Dictionary::class.java)
 
     @PostConstruct
     fun postConstruct() {
@@ -25,7 +29,7 @@ class Dictionary (val config: ConfigDef) {
         if (!Files.exists(file) || Files.isDirectory(file)) {
             throw Error("コードマスタファイル[${file}]が見つかりません")
         } else {
-            println("コードマスタファイル[${file}]が見つかりました")
+            log.info("コードマスタファイル[${file}]が見つかりました")
         }
 
         var lines = Files.readAllLines(file)
@@ -55,7 +59,7 @@ class Dictionary (val config: ConfigDef) {
         if (!Files.exists(file) || Files.isDirectory(file)) {
             throw Error("DBテーブル一覧ファイル[${file}]が見つかりません")
         } else {
-            println("DBテーブル一覧ファイル[${file}]が見つかりました")
+            log.info("DBテーブル一覧ファイル[${file}]が見つかりました")
         }
         var lines = Files.readAllLines(file)
         for (line in lines) {
@@ -70,7 +74,7 @@ class Dictionary (val config: ConfigDef) {
         if (!Files.exists(file) || Files.isDirectory(file)) {
             throw Error("データディクショナリファイル[${file}]が見つかりません")
         } else {
-            println("データディクショナリファイル[${file}]が見つかりました")
+            log.info("データディクショナリファイル[${file}]が見つかりました")
         }
         lines = Files.readAllLines(file)
         for (line in lines) {

@@ -4,7 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 
-
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 /**
  * 備忘：SpringBootのCofigurationPropertiesは、application.ymlから読み込んでくれる
  * 　　　Javaの場合は、setterがないとインジェクトしてくれないが、Kotlinだとsetterがなくてもインジェクトしてくれる
@@ -13,6 +14,8 @@ import javax.annotation.PostConstruct
 @Component
 @ConfigurationProperties(prefix = "app")
 class ConfigDef {
+    val log = LoggerFactory.getLogger(ConfigDef::class.java)
+
     //appllication.ymlから読み込むプロパティ
     var dBConnections: List<Map<String, String>> = listOf()
     var dataDictionaryFilePath: String = ""
@@ -28,13 +31,13 @@ class ConfigDef {
             if ( con["DB_SERVER_PRODUCT"] == null ) { throw Error("config.ymlのapp.DBConnectionsにDB_SERVER_PRODUCTが設定されていません。") }
 
             if ( con["ENV"] == value ){
-                println("ENVを[$currentEnvironment] から[$value]へスイッチ")
+                log.info("ENVを[$currentEnvironment] から[$value]へスイッチ")
                 this.currentEnvironment = con["ENV"]!!
                 this.currentDBServerProduct = con["DB_SERVER_PRODUCT"].orEmpty()
                 break
             }
         }
-        println("ENV = [$currentEnvironment] DB_SERVER_PRODUCT = [$currentDBServerProduct] ")
+        log.info("ENV = [$currentEnvironment] DB_SERVER_PRODUCT = [$currentDBServerProduct] ")
         if ( this.currentEnvironment == "" ) { throw Error("[$value]はapplication.ymlに登録されたENVではありません") }
     }
     public fun getCurrentEnvironment ():String {
@@ -50,7 +53,7 @@ class ConfigDef {
         if ( dBConnections.size == 0 ) {
             throw Error("application.ymlにENVが登録されていません")
         }
-        println("application.ymlに登録されたENV = " + dBConnections.map { t -> t["ENV"]})
+        log.info("application.ymlに登録されたENV = " + dBConnections.map { t -> t["ENV"]})
         setCurrentEnvironment( dBConnections.get(0).get("ENV").orEmpty() )
     }
 

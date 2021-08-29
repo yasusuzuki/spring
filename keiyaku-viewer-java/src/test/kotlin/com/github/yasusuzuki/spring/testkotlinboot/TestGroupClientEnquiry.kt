@@ -3,25 +3,24 @@ package com.github.yasusuzuki.spring.testkotlinboot
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.extension.ExtendWith
 
 import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.capture
-import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.argThat
-import org.mockito.kotlin.KArgumentCaptor
 import org.mockito.kotlin.argumentCaptor
-
+import org.mockito.kotlin.times
 
 import assertk.assertThat
+import assertk.assertAll
 import assertk.assertions.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+class TestGroupClientEnquiry {
+    val log = LoggerFactory.getLogger(TestGroupClientEnquiry::class.java)
 
-class TestGroupClientEnquiry {    
     @Test
     fun test() {
         val mockDic = mock<Dictionary>{
@@ -31,7 +30,7 @@ class TestGroupClientEnquiry {
         }
         val mockQuery = mock<DatabaseQuery>{
             on {buildHTMLFromSQL(any(),any())} doAnswer{
-                println("Call Mock buildHtmlFromSQL()")
+                log.info("Call Mock buildHtmlFromSQL()")
                 val callback = it.arguments[1] as Map<String, (String?,String?,List<String>?,Map<String,Any?>?) -> String>
                 callback.get("KeyA")?.invoke("KeyA", "A", null, null)
                 callback.get("KeyA")?.invoke("KeyA", "B", null, null)
@@ -60,49 +59,26 @@ class TestGroupClientEnquiry {
 
         )
         var req = GroupClientEnquiry.Request("12345",false)
+        //Run Target
         var result = app.buildDataTables(req)
+        result.forEach{ it.html() }
 
-        var t = result[0]
-        println("Table[%s] html[%s]".format(t.logicalTableName,t.html()))
+        //Extract Actual
+        var actual : List<String>
         argumentCaptor<String>().apply {
-            verify(mockQuery,atLeastOnce()).buildHTMLFromSQL(capture(),any())
-            assertThat(lastValue).isEqualTo("SELECT * FROM Table1 WHERE 団体＿コード = '12345'")
+            verify(mockQuery,times(7)).buildHTMLFromSQL(capture(),any())
+            actual = allValues
         }
-        t = result[1]
-        println("Table[%s] html[%s]".format(t.logicalTableName,t.html()))
-        argumentCaptor<String>().apply {
-            verify(mockQuery,atLeastOnce()).buildHTMLFromSQL(capture(),any())
-            assertThat(lastValue).isEqualTo("SELECT * FROM Table2 WHERE 団体＿コード = '12345'")
-        }
-        t = result[2]
-        println("Table[%s] html[%s]".format(t.logicalTableName,t.html()))
-        argumentCaptor<String>().apply {
-            verify(mockQuery,atLeastOnce()).buildHTMLFromSQL(capture(),any())
-            assertThat(lastValue).isEqualTo("SELECT * FROM Table3 WHERE KeyA IN ('A','B',NULL,'D')")
-        }
-        t = result[3]
-        println("Table[%s] html[%s]".format(t.logicalTableName,t.html()))
-        argumentCaptor<String>().apply {
-            verify(mockQuery,atLeastOnce()).buildHTMLFromSQL(capture(),any())
-            assertThat(lastValue).isEqualTo("SELECT * FROM Table4 WHERE KeyB IN ('aiueo','kakikukeko')")
-        }
-        t = result[4]
-        println("Table[%s] html[%s]".format(t.logicalTableName,t.html()))
-        argumentCaptor<String>().apply {
-            verify(mockQuery,atLeastOnce()).buildHTMLFromSQL(capture(),any())
-            assertThat(lastValue).isEqualTo("SELECT * FROM Table5 WHERE IGR_SDN_CSD_CD IN ('X12','X12345')")
-        }
-        t = result[5]
-        println("Table[%s] html[%s]".format(t.logicalTableName,t.html()))
-        argumentCaptor<String>().apply {
-            verify(mockQuery,atLeastOnce()).buildHTMLFromSQL(capture(),any())
-            assertThat(lastValue).isEqualTo("SELECT * FROM Table6 WHERE CAR_LGO_CSD_CD IN ('CX12','C12345')")
-        }
-        t = result[6]
-        println("Table[%s] html[%s]".format(t.logicalTableName,t.html()))
-        argumentCaptor<String>().apply {
-            verify(mockQuery,atLeastOnce()).buildHTMLFromSQL(capture(),any())
-            assertThat(lastValue).isEqualTo("SELECT * FROM Table7 WHERE FIR_LGO_CSD_CD IN ('FX12','F12345')")
+
+        //Verify
+        assertAll{ 
+            assertThat(actual[0]).isEqualTo("SELECT * FROM Table1 WHERE 団体＿コード = '12345'")
+            assertThat(actual[1]).isEqualTo("SELECT * FROM Table2 WHERE 団体＿コード = '12345'")
+            assertThat(actual[2]).isEqualTo("SELECT * FROM Table3 WHERE KeyA IN ('A','B',NULL,'D')")
+            assertThat(actual[3]).isEqualTo("SELECT * FROM Table4 WHERE KeyB IN ('aiueo','kakikukeko')")
+            assertThat(actual[4]).isEqualTo("SELECT * FROM Table5 WHERE IGR_SDN_CSD_CD IN ('X12','X12345')")
+            assertThat(actual[5]).isEqualTo("SELECT * FROM Table6 WHERE CAR_LGO_CSD_CD IN ('CX12','C12345')")
+            assertThat(actual[6]).isEqualTo("SELECT * FROM Table7 WHERE FIR_LGO_CSD_CD IN ('FX12','F12345')")
         }
     }
 }

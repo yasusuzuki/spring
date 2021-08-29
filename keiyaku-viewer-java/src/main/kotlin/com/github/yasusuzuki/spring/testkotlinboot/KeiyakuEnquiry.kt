@@ -6,9 +6,12 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 
-
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 @Controller
 class KeiyakuEnquiry(var config: ConfigDef,var dic: Dictionary,var query: DatabaseQuery) {
+    val log = LoggerFactory.getLogger(KeiyakuEnquiry::class.java)
+
     //policyNumberはリストで来る場合とそうでない場合があるが、SpringMVCがコンマ区切りのStringに変換してセットしてくれる
     data class Request(
         var policyNumber: String = "", //複数設定される場合は、コンマ区切りになる
@@ -17,7 +20,7 @@ class KeiyakuEnquiry(var config: ConfigDef,var dic: Dictionary,var query: Databa
 
     @GetMapping("/keiyakuEnquiry" )
     fun execute(@ModelAttribute req:Request, model:Model ): String {
-        println("Process keiyakuEnquiry:  req = $req")
+        log.info("Process keiyakuEnquiry:  req = $req")
 
         //callback
         var callback = mapOf(
@@ -61,7 +64,7 @@ class KeiyakuEnquiry(var config: ConfigDef,var dic: Dictionary,var query: Databa
             dataTables.add(TableResultPair(e.logicalTableName,html))
         }
         model["dataTables"] =  dataTables
-        model["appName"] = "Keiyaku Viewer"
+        model["appName"] = req.policyNumber
         model["environmentList"] = config.listEnvironment()
         model["req"] = req
         return "keiyakuEnquiry"
