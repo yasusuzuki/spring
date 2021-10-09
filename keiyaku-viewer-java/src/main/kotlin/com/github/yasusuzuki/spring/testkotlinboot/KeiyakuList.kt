@@ -39,19 +39,11 @@ class KeiyakuList(var config: ConfigDef, var dic: Dictionary,var query: Database
         //callback
         var callback = mapOf(
             "PREPEND" to fun(_:String?,_:String?,columns:List<String>?,values:Map<String,Any?>?):String{
-                //注意：　key と valがブランクになるのでvaluesからpolicyNumberを取得する
-                var polNumColumnNumber = 0
-                if ( columns == null ){throw Error()}
-                if ( values == null ){throw Error()}
-                for ( i in columns.indices){
-                    if ( columns[i] == "証券＿番号" ) {
-                        polNumColumnNumber = i
-                        break
-                    }
-                }
-                var targetColumn = columns.get(polNumColumnNumber)
-                var policyNumber = values.get(targetColumn) as String
-                return "<INPUT TYPE='checkbox'  NAME='policyNumber' value='" + policyNumber + "'>"            },
+                //注意：　key と valがブランクになるのでvaluesから取得する
+                require(values != null) { "values must be non-null, but was null" }
+                var policyNumber = values.get("証券＿番号")
+                return "<INPUT TYPE='checkbox'  NAME='policyNumber' value='" + policyNumber + "'>"
+            },
             "H_PREPEND" to fun(_:String?,_:String?,_:List<String>?,_:Map<String,Any?>?):String{
                 var html = "<INPUT TYPE='checkbox' onClick='toggleAllMsg(this, \"policyNumber\");'>&nbsp;"
                 html += "<INPUT TYPE='submit' NAME='ACTN' VALUE='契約DB詳細' class='button' onClick='setActionToDataForm(\"/keiyakuEnquiry\");'>"
@@ -60,9 +52,9 @@ class KeiyakuList(var config: ConfigDef, var dic: Dictionary,var query: Database
             "証券＿番号" to fun(_:String?,value:String?,_:List<String>?,_:Map<String,Any?>?):String{
                 return "<A HREF='/keiyakuEnquiry?policyNumber=" + value + "'>" + value + "</A>"
             },
-            "団体＿コード" to fun(_:String?,value:String?,_:List<String>?,_:Map<String,Any?>?):String{
+            "自動車保険契約種目フリート契約者＿コード" to fun(_:String?,value:String?,_:List<String>?,_:Map<String,Any?>?):String{
                 return if ( value != null ) { 
-                    "<A HREF='/groupClientEnquiry?groupClientCode=" + value + "'>" + value + "</A>"
+                    "<A HREF='/fleetKeiyakushaEnquiry?fleetKeiyakushaCode=" + value + "'>" + value + "</A>"
                 } else {
                     "NULL"
                 }
@@ -74,6 +66,13 @@ class KeiyakuList(var config: ConfigDef, var dic: Dictionary,var query: Database
                     "<A HREF='/agentEnquiry?agentCodeSubCode=${agentCode}-${agentSubCode}'>${agentCode}-${agentSubCode}</A>"
                 } else if ( agentCode != null ) {
                     "<A HREF='/agentEnquiry?agentCodeSubCode=" + agentCode +  "'>" + agentCode + "</A>"
+                } else {
+                    "NULL"
+                }
+            },
+            "団体＿コード" to fun(_:String?,value:String?,_:List<String>?,_:Map<String,Any?>?):String{
+                return if ( value != null ) { 
+                    "<A HREF='/groupClientEnquiry?groupClientCode=" + value + "'>" + value + "</A>"
                 } else {
                     "NULL"
                 }

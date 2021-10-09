@@ -10,12 +10,13 @@
 </head>
 
 <body>
-    <h1> モニター </h1>
-    <div th:each="item : ${ds}">
-        <H3 th:id='${item.key}' th:text="${item.key}"></H3>
-        <DIV>Active: <SPAN th:utext="${item.value.active}"></SPAN></DIV>
-        <DIV>Idle: <SPAN th:utext="${item.value.idle}"></SPAN></DIV>
-        <DIV>Max: <SPAN th:utext="${item.value.max}"></SPAN></DIV>
-    </div>
+<DIV CLASS="header">環境：[[${@configDef.getCurrentEnvironment()}]] 現在時刻：[[${@configDef.currentDateTime()}]]</DIV>
+<h1> モニター </h1>
+<div th:each="item : ${ds}">
+    <H3 th:id='${item.key}' th:text="${item.key}"></H3>
+    <DIV>Active: <SPAN th:utext="${item.value.active}"></SPAN></DIV>
+    <DIV>Idle: <SPAN th:utext="${item.value.idle}"></SPAN></DIV>
+    <DIV>Max: <SPAN th:utext="${item.value.max}"></SPAN></DIV>
+</div>
 </body>
 </html>

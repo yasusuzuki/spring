@@ -2,18 +2,31 @@
 app:
     DBConnections:
         -
-            ENV: 新規
-            DB_SERVER_PRODUCT: ACCESS_VIA_ODBC
-            DB: .\data\keiyaku_shinki.accdb
-        -
-            ENV: 変更
-            DB_SERVER_PRODUCT: ACCESS_VIA_ODBC
-            DB: .\data\keiyaku_henkou.accdb
+            ENV: H2DB
+            DB_SERVER_PRODUCT: H2DB
+        # -
+        #     ENV: YASU_DB
+        #     DB_SERVER_PRODUCT: DB2
+        #     HOSTNAME: localhost
+        #     DATABASE: YASU_DB
+        #     PORT: 50000
+        #     SCHEMA: POL
+        #     UID: yasu
+        #     PWD: suzuki123       
+#        -
+#            ENV: 新規
+#            DB_SERVER_PRODUCT: ACCESS_VIA_ODBC
+#            DB: .\data\keiyaku_shinki.accdb
+#        -
+#            ENV: 変更
+#            DB_SERVER_PRODUCT: ACCESS_VIA_ODBC
+#            DB: .\data\keiyaku_henkou.accdb
 
 
     #データディクショナリのデータ項目一覧をダウンロードし、データ項目だけ抜粋し、UTF-8で保存したもの
-    DataDictionaryFilePath: .\data\data_dictionary.csv
+    DataDictionaryFilePath: .\data\data_dictionary.csv, .\data\data_dictionary_fw.csv
     #"XXXX_テーブル一覧.xlsx"から、テーブルの論理名と物理名を抜粋し、UTF-8で保存したもの
     DBTableListFilePath: .\data\db_tables.csv
     #データディクショナリのコード一覧ダウンロードし、データ項目だけ抜粋し、UTF-8で保存したもの
-    CodeMasterFilePath: .\data\codemaster.csv
+    CodeMasterFilePath: .\data\codemaster.csv, .\data\codemaster_fw.csv
+

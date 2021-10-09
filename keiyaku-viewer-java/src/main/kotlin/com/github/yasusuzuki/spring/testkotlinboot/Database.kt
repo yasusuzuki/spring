@@ -51,6 +51,8 @@ class Database(var appConfig: ConfigDef,var dic: Dictionary) {
                 dataSourcePool[envName] = dataSourceDB2(env)
             } else if (dbProduct == "ACCESS_VIA_ODBC") {
                 dataSourcePool[envName] = dataSourceAccessDB(env)
+            } else if (dbProduct == "H2DB" ) {
+                dataSourcePool[envName] = dataSourceH2()
             } else {
                 throw Error("invalid DB_SERVER_ROOT [" + dbProduct + "]")
             }
@@ -61,7 +63,7 @@ class Database(var appConfig: ConfigDef,var dic: Dictionary) {
         val config = initHikariDatasource()
         config.driverClassName = "com.ibm.db2.jcc.DB2Driver"
         val jdbcUrl = String.format(
-            "jdbc:db2://%s:%s/%s",
+            "jdbc:db2://%s:%s/%s:retrieveMessagesFromServerOnGetMessage=true;",
             env["HOSTNAME"],
             env["PORT"],
             env["DATABASE"]
@@ -93,6 +95,16 @@ class Database(var appConfig: ConfigDef,var dic: Dictionary) {
             folder.resolve("cache")
         )
         log.info("Env " + env["ENV"] + " Connecting to " + jdbcUrl)
+        config.jdbcUrl = jdbcUrl
+        hikari = HikariDataSource(config)
+        return hikari
+    }
+
+    private fun dataSourceH2(): DataSource {
+        val config = initHikariDatasource()
+        config.driverClassName = "org.h2.Driver"
+        val jdbcUrl = String.format("jdbc:h2:mem:testdb;MODE=DB2;INIT=RUNSCRIPT FROM './data/h2_init.sql';")
+        log.info("Connecting To $jdbcUrl")
         config.jdbcUrl = jdbcUrl
         hikari = HikariDataSource(config)
         return hikari
@@ -146,6 +158,16 @@ class Database(var appConfig: ConfigDef,var dic: Dictionary) {
                 recordList.add(record)
             }
             rt.close()
+        } catch (sqle: SQLException ) {
+            //DB2は標準のSQLExcption.printStackTrace()だとエラーコードしか表示しないので、
+            //詳細な表示処理をする
+            var sqlen :SQLException? = sqle
+            var i = 1
+            while ( sqlen != null ) {
+                log.error("SQLException(%d): State[%s] Code[%s] Message[%s]"
+                .format(i++,sqlen.getSQLState(),sqlen.errorCode,sqlen.message))
+                sqlen = sqlen.nextException
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
@@ -153,4 +175,23 @@ class Database(var appConfig: ConfigDef,var dic: Dictionary) {
         }
         return SQLResultSet(columnList,recordList)
     }
+
+    fun execute(con: Connection, sql: String?): String {
+        var result = 0
+        lateinit var stmt : Statement
+        try {
+            stmt = con.createStatement()
+            log.info("Executing SQL -- $sql")
+            result = stmt.executeUpdate(sql);
+        } catch (e: SQLException) {
+            val msg ="SQLException: State[%s] Code[%s] Message[%s]"
+                        .format(e.getSQLState(),e.errorCode,e.message)
+            log.error(msg)
+            return "<DIV CLASS='message_error'>${msg}</DIV>"
+        } finally {
+            stmt.close()
+        }
+        return "<DIV CLASS='message_success'>${result}件の更新が成功しました</DIV>"
+    }
+
 }

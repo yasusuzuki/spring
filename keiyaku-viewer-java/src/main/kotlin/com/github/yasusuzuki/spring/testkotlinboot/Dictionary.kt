@@ -16,7 +16,7 @@ class Dictionary (val config: ConfigDef) {
     @PostConstruct
     fun postConstruct() {
         initCodeMaster()
-        initL2PDictionary()
+        initDictionary()
     }
     // コードマスタは、ドメイン名 > (コード値名、コード値名称)のペアのマップ
     // コードマスタは、順番に表示したいので、LinkedHashMap
@@ -25,21 +25,24 @@ class Dictionary (val config: ConfigDef) {
     data class CodeValueNamePair(var codeValue: String = "", var codeName: String = "")
 
     fun initCodeMaster() {
-        var file = Paths.get(config.codeMasterFilePath)
-        if (!Files.exists(file) || Files.isDirectory(file)) {
-            throw Error("コードマスタファイル[${file}]が見つかりません")
-        } else {
-            log.info("コードマスタファイル[${file}]が見つかりました")
-        }
-
-        var lines = Files.readAllLines(file)
-        for (line in lines) {
-            var words = line.split(",")
-            if (words.size < 6) continue // ときどき、2行目に折り返してしまっているデータがある。この2行目は無視する。
-            if (CodeMaster.containsKey(words[0])) {
-                CodeMaster.get(words[0])!!.add(CodeValueNamePair(words[1], words[5]))
+        for ( fileName in config.codeMasterFilePath) {
+            var file = Paths.get(fileName)
+            if (!Files.exists(file) || Files.isDirectory(file)) {
+                throw Error("コードマスタファイル[${file}]が見つかりません")
             } else {
-                CodeMaster[words[0]] = mutableListOf(CodeValueNamePair(words[1], words[5]))
+                log.info("コードマスタファイル[${file}]が見つかりました")
+            }
+
+            var lines = Files.readAllLines(file)
+            log.info("    %s行".format(lines.count()))
+            for (line in lines) {
+                var words = line.split(",")
+                if (words.size < 6) continue // ときどき、2行目に折り返してしまっているデータがある。この2行目は無視する。
+                if (CodeMaster.containsKey(words[0])) {
+                    CodeMaster.get(words[0])!!.add(CodeValueNamePair(words[1], words[5]))
+                } else {
+                    CodeMaster[words[0]] = mutableListOf(CodeValueNamePair(words[1], words[5]))
+                }
             }
         }
     }
@@ -54,7 +57,7 @@ class Dictionary (val config: ConfigDef) {
     var P2LDictionary:MutableMap<String,DomainLogicalNamePair> = mutableMapOf()
 
     
-    fun initL2PDictionary() {
+    fun initDictionary() {
         var file = Paths.get(config.dBTableListFilePath)
         if (!Files.exists(file) || Files.isDirectory(file)) {
             throw Error("DBテーブル一覧ファイル[${file}]が見つかりません")
@@ -64,34 +67,37 @@ class Dictionary (val config: ConfigDef) {
         var lines = Files.readAllLines(file)
         for (line in lines) {
             var words = line.split(",")
-            if (words.size < 2) continue
+            if (words.size < 2) continue    
             // 0:DB名、1:テーブル論理名、2:テーブル物理名、3:検索に用いる主キー
             L2PDBTables[words[1]] = words[2]
             DBTables += TableDefinition(words[0],words[1],words[3])
         }
-        // データディクショナリのロード
-        file = Paths.get(config.dataDictionaryFilePath)
-        if (!Files.exists(file) || Files.isDirectory(file)) {
-            throw Error("データディクショナリファイル[${file}]が見つかりません")
-        } else {
-            log.info("データディクショナリファイル[${file}]が見つかりました")
-        }
-        lines = Files.readAllLines(file)
-        for (line in lines) {
-            var words = line.split(",")
-            if (words.size < 4) continue
-            // words[0]がデータ項目論理名、words[1]がドメイン名、words[2]が項目物理名（Java）,words[3]がデータ項目物理名
-            L2PDictionary[words[0]] = DomainPhysicalNamePair(words[1], words[2], words[3])
-        }
-        // 検索の高速化のため、ハッシュ―キーとバリューを入れ替えたマップを作成する
-        for ((k, v) in L2PDBTables) {
-            P2LDBTables[v] = k
-        }
-        for ((k, v) in L2PDictionary) {
-            P2LDictionary[v.physicalName] = DomainLogicalNamePair(v.domain, k)
-            //E0001 Java物理目もディクショナリ登録
-            P2LDictionary[v.javaName] = DomainLogicalNamePair(v.domain, k)
 
+        // データディクショナリのロード
+        for ( fileName in config.dataDictionaryFilePath) {
+            file = Paths.get(fileName)
+            if (!Files.exists(file) || Files.isDirectory(file)) {
+                throw Error("データディクショナリファイル[${file}]が見つかりません")
+            } else {
+                log.info("データディクショナリファイル[${file}]が見つかりました")
+            }
+            lines = Files.readAllLines(file)
+            for (line in lines) {
+                var words = line.split(",")
+                if (words.size < 4) continue
+                // words[0]がデータ項目論理名、words[1]がドメイン名、words[2]が項目物理名（Java）,words[3]がデータ項目物理名
+                L2PDictionary[words[0]] = DomainPhysicalNamePair(words[1], words[2], words[3])
+            }
+            // 検索の高速化のため、ハッシュ―キーとバリューを入れ替えたマップを作成する
+            for ((k, v) in L2PDBTables) {
+                P2LDBTables[v] = k
+            }
+            for ((k, v) in L2PDictionary) {
+                P2LDictionary[v.physicalName] = DomainLogicalNamePair(v.domain, k)
+                //E0001 Java物理目もディクショナリ登録
+                P2LDictionary[v.javaName] = DomainLogicalNamePair(v.domain, k)
+
+            }
         }
     }
 
@@ -101,7 +107,14 @@ class Dictionary (val config: ConfigDef) {
 
     /** データ項目論理名からドメイン名をひく */
     fun lookupDomain(fieldName: String): String {
-        return L2PDictionary[fieldName]?.domain ?: ""
+        val domain = L2PDictionary[fieldName]?.domain ?: ""
+        var codeList = CodeMaster[domain]
+        //コードマスタに存在しないドメインは、ブランクを返却する
+        return if ( codeList != null ){
+            domain
+        } else {
+            ""
+        }
     }
 
     /** データ項目論理名とコード値から、コード値名称をひく */
@@ -123,10 +136,11 @@ class Dictionary (val config: ConfigDef) {
 
     /** データ項目論理名から、データ項目物理名をひく */
     fun L2P(logicalName: String): String {
-        if (config.getCurrentDBServerProduct() == "ACCESS_VIA_ODBC" ||
+        /*if (config.getCurrentDBServerProduct() == "ACCESS_VIA_ODBC" ||
                 config.getCurrentDBServerProduct() == "SQLITE") {
             return logicalName
-        }
+        }*/
+    
         //  データ項目を優先して検索、なければテーブル一覧を検索
         // 該当がなければ、論理名→物理名変換せずに論理名をそのまま返す
         return L2PDictionary[logicalName]?.physicalName ?: L2PDBTables[logicalName] ?: logicalName

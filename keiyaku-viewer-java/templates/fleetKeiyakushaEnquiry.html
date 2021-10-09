@@ -11,12 +11,12 @@
 
 <BODY>
 <DIV CLASS="header">環境：[[${@configDef.getCurrentEnvironment()}]] 現在時刻：[[${@configDef.currentDateTime()}]]</DIV>
-<H1> 契約DB詳細 </H1>
-<FORM NAME='QFORM' METHOD='GET' ACTION='/keiyakuEnquiry'>
+<H1> フリート契約者詳細 </H1>
+<FORM NAME='QFORM' METHOD='GET' ACTION='/fleetKeiyakushaEnquiry'>
     <TABLE  CLASS='QueryForm'>
         <TR>
-            <TD>証券番号：</TD>
-            <TD><INPUT TYPE="text" ID="policyNumber" NAME="policyNumber" th:value="${req.policyNumber}"></TD>
+            <TD>フリート契約者コード(,)：</TD>
+            <TD><INPUT TYPE="text" ID="fleetKeiyakushaCode" NAME="fleetKeiyakushaCode" th:value="${req.fleetKeiyakushaCode}"></TD>
             <TD>冗長モード: </TD>
             <TD><INPUT TYPE='CHECKBOX' ID='verboseMode' NAME='verboseMode' th:checked="${req.verboseMode}" ></TD>
         </TR>
@@ -25,20 +25,14 @@
 </FORM>
 <HR SIZE=1 NOSHADE>
 <UL CLASS='MenuBar'>
+    <LI><A HREF='/teianList' CLASS='button_face'>提案DB一覧</A></LI>
     <LI><A HREF='/keiyakuList' CLASS='button_face'>契約DB一覧</A></LI>
 </UL>
 <FORM NAME='DFORM' METHOD='GET' ACTION='DUMMY'>
-    <UL CLASS='MenuBar'>
-        <LI><A HREF='#保険契約' CLASS='InternalPageLink'>保険契約↓</A></LI>
-        <LI><A HREF='#保険契約種目' CLASS='InternalPageLink'>保険契約種目↓</A></LI>
-        <LI><A HREF='#保険契約明細'  CLASS='InternalPageLink'>保険契約明細↓</A></LI>
-        <LI><A HREF='#保険契約明細担保条件特約'  CLASS='InternalPageLink'>保険契約明細担保条件特約↓</A></LI>
-    </UL>
     <div th:each="item : ${dataTables}">
         <H3 th:id='${item.logicalTableName}' th:text="${item.logicalTableName}"></H3>
         <!--/* E0002 */-->
-        <DIV th:utext="${item.html.invoke()}"></DIV>
-    </div>
+        <DIV th:utext="${item.html.invoke()}"></DIV>    </div>
 </FORM>
 </BODY>
 

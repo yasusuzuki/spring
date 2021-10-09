@@ -10,6 +10,7 @@
 </head>
 
 <body>
+<DIV CLASS="header">環境：[[${@configDef.getCurrentEnvironment()}]] 現在時刻：[[${@configDef.currentDateTime()}]]</DIV>
 <h1> 契約DB一覧(明細計上単位) </h1>
 
 <FORM NAME='QFORM' METHOD='GET' ACTION='/keiyakuList' >
@@ -58,6 +59,11 @@
     <LI><A HREF='/teianList' CLASS='button_face'>提案DB一覧</A></LI>
     <LI><A HREF='/groupClientEnquiry' CLASS='button_face'>団体詳細</A></LI>
     <LI><A HREF='/agentEnquiry' CLASS='button_face'>代理店詳細</A></LI>
+    <LI><A HREF='/fleetKeiyakushaEnquiry' CLASS='button_face'>フリート契約者詳細</A></LI>
+    <LI><A HREF='/bigUserEnquiry' CLASS='button_face'>ビッグユーザ詳細</A></LI>
+    <LI><A HREF='/shokenShoruiList' CLASS='button_face'>証券書類一覧</A></LI>
+    <LI><A HREF='/asyncTaskList' CLASS='button_face'>非同期ジョブ</A></LI>
+
 </UL>
 <FORM NAME='DFORM' METHOD='GET' ACTION='DUMMY'>
     <h3>契約エンティティ</h3>

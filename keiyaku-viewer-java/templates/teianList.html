@@ -10,6 +10,7 @@
 </head>
 
 <body>
+<DIV CLASS="header">環境：[[${@configDef.getCurrentEnvironment()}]] 現在時刻：[[${@configDef.currentDateTime()}]]</DIV>
 <H1> 提案DB一覧 (明細単位)</H1>
 
 <FORM NAME='QFORM' METHOD='GET' ACTION='/teianList' >
@@ -17,8 +18,8 @@
         <TR>
             <TD>案件番号(*)：</TD>
             <TD><input type="text" id="ankenNumber" name="ankenNumber" th:value="${req.ankenNumber}"></TD>
-            <TD>契約者名(*):</TD>
-            <TD ><input type="text" id="policyHolderName" name="policyHolderName" th:value="${req.policyHolderName}"></TD>
+            <TD>代理店コード(*)：</TD>
+            <TD><input type="text" id="agentCode" name="agentCode" th:value="${req.agentCode}"></TD>
             <TD>変更内容:</TD>
             <TD ><select id="amendmentCode" name="amendmentCode" th:value="${req.amendmentCode}">
                 <option th:value="''" th:text="'全部'"     th:selected="${req.amendmentCode == ''}" ></option>
@@ -29,16 +30,16 @@
             <TD><input type="number" id="maxFetchRows" name="maxFetchRows" th:value="${req.maxFetchRows}"></TD>
         </TR>
         <TR>
+            <TD>証券番号(*)：</TD>
+            <TD><input type="text" id="policyNumber" name="policyNumber" th:value="${req.policyNumber}"></TD>
+            <TD>契約者名(*):</TD>
+            <TD ><input type="text" id="policyHolderName" name="policyHolderName" th:value="${req.policyHolderName}"></TD>
             <TD>種目：</TD>
             <TD><select id="policyType" name="policyType" th:value="${req.policyType}">
                 <option th:value="''" th:text="'全部'"     th:selected="${req.policyType == ''}" ></option>
                 <option th:value="'73'" th:text="'自動車'" th:selected="${req.policyType == '73'}" ></option>
                 <option th:value="'71'" th:text="'傷害'"   th:selected="${req.policyType == '71'}" ></option>
             </select></TD>
-            <TD>代理店コード(*)：</TD>
-            <TD><input type="text" id="agentCode" name="agentCode" th:value="${req.agentCode}"></TD>
-            <TD>証券番号(*)：</TD>
-            <TD><input type="text" id="policyNumber" name="policyNumber" th:value="${req.policyNumber}"></TD>
             <TD>DB：</TD>
             <TD><select id="environment" name="environment">
                 <option th:each="item : ${environmentList}" th:value="${item}" th:text="${item}" th:selected="${req.environment == item}" ></option>
@@ -68,6 +69,8 @@
     <LI><A HREF='/dataDictionaryEnquiry' CLASS='button_face'>データディクショナリ（データ項目一覧）</A></LI>
     <LI><A HREF='/groupClientEnquiry' CLASS='button_face'>団体詳細</A></LI>
     <LI><A HREF='/agentEnquiry' CLASS='button_face'>代理店詳細</A></LI>
+    <LI><A HREF='/fleetKeiyakushaEnquiry' CLASS='button_face'>フリート契約者詳細</A></LI>
+    <LI><A HREF='/bigUserEnquiry' CLASS='button_face'>ビッグユーザ詳細</A></LI>
 </UL>
 <FORM NAME='DFORM' METHOD='GET' ACTION='DUMMY'>
     <h3>・提案エンティティ</h3>

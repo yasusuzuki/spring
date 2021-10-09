@@ -28,7 +28,7 @@ class GroupClientEnquiry(var query: DatabaseQuery, var dic: Dictionary){
         log.info("Process groupClientEnquiry:  req = $req")
         var dataTables = buildDataTables(req)
         model["dataTables"] =  dataTables
-        model["appName"] = "Keiyaku Viewer"
+        model["appName"] = req.groupClientCode
         model["req"] = req
         return "groupClientEnquiry"
     }

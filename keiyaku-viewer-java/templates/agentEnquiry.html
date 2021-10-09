@@ -10,11 +10,12 @@
 </head>
 
 <BODY>
+<DIV CLASS="header">環境：[[${@configDef.getCurrentEnvironment()}]] 現在時刻：[[${@configDef.currentDateTime()}]]</DIV>
 <H1> 代理店詳細 </H1>
 <FORM NAME='QFORM' METHOD='GET' ACTION='/agentEnquiry'>
     <TABLE  CLASS='QueryForm'>
         <TR>
-            <TD>代理店コード-代理店サブコード：</TD>
+            <TD>代理店コード-代理店サブコード(,)：</TD>
             <TD><INPUT TYPE="text" ID="agentCodeSubCode" NAME="agentCodeSubCode" th:value="${req.agentCodeSubCode}"></TD>
             <TD>冗長モード: </TD>
             <TD><INPUT TYPE='CHECKBOX' ID='verboseMode' NAME='verboseMode' th:checked="${req.verboseMode}" ></TD>

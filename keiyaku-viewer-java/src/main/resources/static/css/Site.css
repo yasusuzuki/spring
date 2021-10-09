@@ -33,6 +33,13 @@ h3 {
 
 h4 {
   letter-spacing: 0px;
+  margin-bottom:0em;
+}
+
+h5 {
+  letter-spacing: 0px;
+  margin-bottom:0em;
+
 }
 
 ul.MenuBar {
@@ -146,7 +153,7 @@ input, select {
 }
 
 select {
-    min-width:12em; /* ある程度大きいほうがクリックしやすい */
+    min-width:10em; /* ある程度大きいほうがクリックしやすい */
 }
 
 input:focus {
@@ -156,7 +163,6 @@ input:focus {
 input[type=checkbox], input[type=radio] {
   vertical-align: middle;
 }
-
 .texta {
   font-size:12px;
   background-color: #fafafa;
@@ -214,10 +220,15 @@ textarea:focus {
   background-color: #e0e0e0;
 }
 
-.button_face_disabled {
+.getbutton:disabled, .button:disabled, .button_face:disabled  {
   pointer-events:none;
   color: darkgrey;
   background-color: lightgray;
+}
+
+.header {
+  float:right;
+  color: lightgray;
 }
 
 .message_error {
@@ -243,7 +254,25 @@ textarea:focus {
 .message_info {
   color: lightgray;
   margin: 0px 30% 0 20px;
-  }
+}
+
+.message_note {
+  padding: 5px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  border-color: #a0c7e4;
+  background-color: #e1ecf4;
+  margin: 0px 20% 0 20px;
+}
+.message_warn {
+  color: #C0392B;
+  padding: 5px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  border-color: #c08080;
+  background-color: #FFFBDD;
+  margin: 0px 20% 0 20px;
+}
 
 pre {
     font-family: verdana, Tahoma, serifSansSerifMonospace,sans-serif;

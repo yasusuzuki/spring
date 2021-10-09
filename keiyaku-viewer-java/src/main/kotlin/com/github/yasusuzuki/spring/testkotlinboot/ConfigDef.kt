@@ -4,6 +4,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 /**
@@ -18,9 +21,9 @@ class ConfigDef {
 
     //appllication.ymlから読み込むプロパティ
     var dBConnections: List<Map<String, String>> = listOf()
-    var dataDictionaryFilePath: String = ""
+    var dataDictionaryFilePath: List<String> = listOf()
     var dBTableListFilePath: String = ""
-    var codeMasterFilePath: String = ""
+    var codeMasterFilePath: List<String> = listOf()
 
     //application.ymlとは関係ないプロパティ
     private var currentDBServerProduct: String = ""
@@ -63,6 +66,10 @@ class ConfigDef {
             list.add(env["ENV"]!!)
         }
         return list
+    }
+
+    fun currentDateTime(): String {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY/MM/dd (E) HH:mm:ss"))
     }
 
 }

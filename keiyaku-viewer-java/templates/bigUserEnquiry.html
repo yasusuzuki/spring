@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" th:content="${appName}">
+    <title th:text="${appName}"></title>
+    <link th:href="@{/css/Site.css}" rel="styleSheet">
+    <script type="text/javascript" th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+<DIV CLASS="header">環境：[[${@configDef.getCurrentEnvironment()}]] 現在時刻：[[${@configDef.currentDateTime()}]]</DIV>
+<h1> ビッグユーザ詳細 </h1>
+
+<FORM NAME='QFORM' METHOD='GET' ACTION='/bigUserEnquiry' >
+    <TABLE CLASS='QueryForm'>
+        <TR>
+            <TD>ビッグユーザー業務内容＿コード(*)：</TD>
+            <TD><input type="text" id="gyoumuCode" name="gyoumuCode" th:value="${req.gyoumuCode}"></TD>
+            <TD>組織グルーピング管理＿番号(*):</TD>
+            <TD ><input type="text" id="groupingNumber" name="groupingNumber" th:value="${req.groupingNumber}"></TD>
+            <TD>MAX:</TD>
+            <TD><input type="number" id="maxFetchRows" name="maxFetchRows" th:value="${req.maxFetchRows}"></TD>
+        </TR>
+    </TABLE>
+    <DIV CLASS="message_info">※組織グルーピング管理＿番号は、代理店コードと代理店サブコードを連結したものです</DIV>
+    <INPUT TYPE='SUBMIT' VALUE='GET' CLASS='getbutton'>
+</FORM>
+
+<HR SIZE=1 NOSHADE>
+<FORM NAME='DFORM' METHOD='GET' ACTION='DUMMY'>
+    <h3>ビッグユーザー業務管理．登録要素．登録内容</h3>
+    <div th:utext="${dataTable}"></div>
+</FORM>
+
+<PRE th:text="${SQL}"></PRE>
+
+</body>
+</html>
+

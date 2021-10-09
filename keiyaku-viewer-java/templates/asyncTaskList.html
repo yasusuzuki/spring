@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" th:content="${appName}">
+    <title th:text="${appName}"></title>
+    <link th:href="@{/css/Site.css}" rel="styleSheet">
+    <script type="text/javascript" th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+<DIV CLASS="header">環境：[[${@configDef.getCurrentEnvironment()}]] 現在時刻：[[${@configDef.currentDateTime()}]]</DIV>
+<h1>非同期ジョブ</h1>
+
+<FORM NAME='QFORM' METHOD='GET' ACTION='/asyncTaskList' >
+    <TABLE CLASS='QueryForm'>
+        <TR>
+            <TD>証券番号(*)：</TD>
+            <TD><input type="text" id="policyNumber" name="policyNumber" th:value="${req.policyNumber}"></TD>
+            <TD>手動追加ジョブ非表示: </TD>
+            <TD><INPUT TYPE='CHECKBOX' ID='hideManualEntry' NAME='hideManualEntry' th:checked="${req.hideManualEntry}" ></TD>
+            <TD>冗長モード: </TD>
+            <TD><INPUT TYPE='CHECKBOX' ID='verboseMode' NAME='verboseMode' th:checked="${req.verboseMode}" ></TD>
+        </TR>
+        <TR>
+            <TD>非同期ジョブID(*)：</TD>
+            <TD><input type="text" id="asyncJobId" name="asyncJobId" th:value="${req.asyncJobId}"></TD>
+            <TD>MAX:</TD>
+            <TD><input type="number" id="maxFetchRows" name="maxFetchRows" th:value="${req.maxFetchRows}"></TD>
+            <TD></TD>
+            <TD></TD>
+        </TR>
+    </TABLE>
+    <INPUT TYPE='SUBMIT' VALUE='GET' CLASS='getbutton'>
+</FORM>
+<HR SIZE=1 NOSHADE>
+<UL CLASS='MenuBar'>
+    <LI><A HREF='/keiyakuList' CLASS='button_face'>契約DB一覧</A></LI>
+    <LI><A HREF='/shokenShoruiList' CLASS='button_face'>証券書類一覧</A></LI>
+</UL>
+    
+<FORM NAME='DFORM' METHOD='POST' ACTION='/asyncTaskList'>
+    <h3>タスク管理テーブル(TASK_MANAGEMENT)</h3>
+    <div th:utext="${dataTable1}"></div>
+    <PRE CLASS="message_info">
+        ※Test Case IDは、非同期パラメータ[ASC_PRM]に対して、正規表現[policyNm=([A-Z0-9]+),policynumberEdabanNm=,contractWrittenEdabanNm=([0-9]+)]で抽出し、生成したものです
+    </PRE>
+    <DIV CLASS="message_warn" th:unless="${hasBeenPosted}">
+        非同期処理登録したいジョブを選択して登録ボタンを押下してください。登録ボタンでDB更新するので注意してください。
+    </DIV>
+
+    <INPUT TYPE='SUBMIT' VALUE='登録' CLASS='getbutton' th:disabled="${hasBeenPosted}"/>
+
+    <!-- QFORMとDFORMは別々のフォームだが、DFORMの送信後も検索条件は維持したいので、hiddenを用いる -->
+    <INPUT TYPE='hidden' NAME='policyNumber' TH:VALUE="${req.policyNumber}"/>
+    <INPUT TYPE='hidden' NAME='hideManualEntry' TH:VALUE="${req.hideManualEntry}"/>
+    <INPUT TYPE='hidden' NAME='asyncJobId' TH:VALUE="${req.asyncJobId}"/>
+    <INPUT TYPE='hidden' NAME='maxFetchRows' TH:VALUE="${req.maxFetchRows}"/>
+    <INPUT TYPE='hidden' NAME='verboseMode' TH:VALUE="${req.verboseMode}"/>
+</FORM>
+
+<DIV th:utext="${registrationMessages}"></DIV>
+
+
+<h3>非同期処理登録パラメータ(ASYNC_PROCESS_REGISTRATION_PARAMETER)</h3>
+<DIV th:utext="${dataTable2}"></DIV>
+</body>
+</html>
+

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" th:content="${appName}">
+    <title th:text="${appName}"></title>
+    <link th:href="@{/css/Site.css}" rel="styleSheet">
+    <script type="text/javascript" th:src="@{/js/script.js}"></script>
+</head>
+
+<BODY>
+<DIV CLASS="header">環境：[[${@configDef.getCurrentEnvironment()}]] 現在時刻：[[${@configDef.currentDateTime()}]]</DIV>
+<H1> 証券書類作成DB詳細</H1>
+<FORM NAME='QFORM' METHOD='GET' ACTION='/shokenShoruiEnquiry'>
+    <TABLE  CLASS='QueryForm'>
+        <TR>
+            <TD>検索キー：</TD>
+            <TD><INPUT TYPE="text" ID="searchKeys" NAME="searchKeys" th:value="${req.searchKeys}"></TD>
+            <TD>冗長モード: </TD>
+            <TD><INPUT TYPE='CHECKBOX' ID='verboseMode' NAME='verboseMode' th:checked="${req.verboseMode}" ></TD>
+        </TR>
+    </TABLE>
+    <PRE>検索キーは、証券番号-証券番号枝番＿番号-計上番号-証券書類作成種類＿コード、のフォーマットです</PRE>
+    <INPUT TYPE='SUBMIT' VALUE='GET' CLASS='getbutton'>
+</FORM>
+<HR SIZE=1 NOSHADE>
+<UL CLASS='MenuBar'>
+    <LI><A HREF='/shokenShoruiList' CLASS='button_face'>証券書類一覧</A></LI>
+    <LI><A HREF='/asyncTaskList' CLASS='button_face'>非同期ジョブ</A></LI>
+</UL>
+<FORM NAME='DFORM' METHOD='POST' ACTION='shokenShoruiEnquiry'>
+    <DIV th:each="item : ${dataTables}">
+        <H3 th:id='${item.logicalTableName}' th:text="${item.logicalTableName}"></H3>
+        <DIV th:utext="${item.html}"></DIV>
+    </DIV>
+    <DIV CLASS="message_warn" th:unless="${hasBeenPosted}">
+    正常終了した非同期ジョブを再実行したい場合、削除ボタンを押下してください。DB更新するので注意してください。
+    </DIV>
+    <INPUT TYPE='SUBMIT' VALUE='削除' CLASS='getbutton' th:disabled="${hasBeenPosted}"/>
+    <DIV th:each="item : ${DBUpdateLog}" th:if="${hasBeenPosted}">
+        <DIV th:utext="${item}"></DIV>
+    </DIV>
+    <DIV th:each="item : ${dataTablesAfterUpdate}"  th:if="${hasBeenPosted}">
+        <H3 th:id='${item.logicalTableName}' th:text="${item.logicalTableName}"></H3>
+        <!--/* E0002 */-->
+        <DIV th:utext="${item.html}"></DIV>
+    </DIV>    
+    <!-- QFORMとDFORMは別々のフォームだが、DFORMの送信後も検索条件は維持したいので、hiddenを用いる -->
+   <INPUT TYPE='hidden' NAME='searchKeys' TH:VALUE="${req.searchKeys}"/>
+   <INPUT TYPE='hidden' NAME='verboseMode' TH:VALUE="${req.verboseMode}"/>
+</FORM>
+</BODY>
+</HTML>

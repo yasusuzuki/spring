@@ -28,7 +28,7 @@ class AgentEnquiry(var dic: Dictionary, var query: DatabaseQuery){
         log.info("Process agentEnquiry:  req = $req")
         var dataTables = buildDataTables(req)
         model["dataTables"] =  dataTables
-        model["appName"] = "Keiyaku Viewer"
+        model["appName"] = req.agentCodeSubCode
         model["req"] = req
         return "agentEnquiry"
     }  
@@ -41,7 +41,12 @@ class AgentEnquiry(var dic: Dictionary, var query: DatabaseQuery){
         req.agentCodeSubCode
             .split(",")
             .map { it.trim() }
-            .map { criteria.putMultiple("代理店＿コード+代理店サブ＿コード",it,"-") }
+            .map { 
+                criteria.putMultiple("代理店＿コード+代理店サブ＿コード",it,"-")
+                //代理店コードとサブコードを連結したものが組織グルーピング管理番号
+                criteria.put("組織グルーピング管理＿番号",it.replace("-","")) 
+            }
+        
 
         //callback
         var callback = hashMapOf(

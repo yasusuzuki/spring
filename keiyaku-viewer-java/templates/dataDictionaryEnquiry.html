@@ -1,44 +1,44 @@
 <!DOCTYPE html>
 <html lang=ja>
-
-    <head>
-        <meta charset="utf-8">
-        <meta name="description" th:content="${appName}">
-        <title th:text="${appName}"></title>
-        <link th:href="@{/css/Site.css}" rel="styleSheet">
-        <script type="text/javascript" th:src="@{/js/script.js}"></script>
-    </head>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" th:content="${appName}">
+    <title th:text="${appName}"></title>
+    <link th:href="@{/css/Site.css}" rel="styleSheet">
+    <script type="text/javascript" th:src="@{/js/script.js}"></script>
+</head>
 
 <body>
-    <h1> データディクショナリ（データ項目一覧） </h1>
-    <FORM NAME='QFORM' METHOD='GET' ACTION='/dataDictionaryEnquiry'>
-        <TABLE  CLASS='QueryForm'>
-            <TR>
-                <TD>データ項目名(*)：</TD>
-                <TD><input type="text" id="fieldLogicalName" name="fieldLogicalName" th:value="${req.fieldLogicalName}"></TD>
-                <TD>項目物理名（データモデリング）(*):</TD>
-                <TD><input type="text" id="fieldPhysicalName" name="fieldPhysicalName" th:value="${req.fieldPhysicalName}"></TD>
-            </TR>
-            <TR>
-                <TD>MAX:</TD>
-                <TD><input type="number" id="maxFetchRows" name="maxFetchRows" th:value="${req.maxFetchRows}"></TD>
-                <TD> </TD>
-                <TD></TD>
-            </TR>
-        </TABLE>
-        <INPUT TYPE='SUBMIT' VALUE='GET' CLASS='getbutton'>
-    </FORM>
-    <HR SIZE=1 NOSHADE>
-    <A HREF='/keiyakuList' CLASS='button_face'>契約DB一覧</A>
+<DIV CLASS="header">環境：[[${@configDef.getCurrentEnvironment()}]] 現在時刻：[[${@configDef.currentDateTime()}]]</DIV>
+<h1> データディクショナリ（データ項目一覧） </h1>
+<FORM NAME='QFORM' METHOD='GET' ACTION='/dataDictionaryEnquiry'>
+    <TABLE  CLASS='QueryForm'>
+        <TR>
+            <TD>データ項目名(*)：</TD>
+            <TD><input type="text" id="fieldLogicalName" name="fieldLogicalName" th:value="${req.fieldLogicalName}"></TD>
+            <TD>項目物理名（データモデリング）(*):</TD>
+            <TD><input type="text" id="fieldPhysicalName" name="fieldPhysicalName" th:value="${req.fieldPhysicalName}"></TD>
+        </TR>
+        <TR>
+            <TD>MAX:</TD>
+            <TD><input type="number" id="maxFetchRows" name="maxFetchRows" th:value="${req.maxFetchRows}"></TD>
+            <TD> </TD>
+            <TD></TD>
+        </TR>
+    </TABLE>
+    <INPUT TYPE='SUBMIT' VALUE='GET' CLASS='getbutton'>
+</FORM>
+<HR SIZE=1 NOSHADE>
+<A HREF='/keiyakuList' CLASS='button_face'>契約DB一覧</A>
 
-    <FORM NAME='DFORM' METHOD='GET' ACTION='DUMMY'>
-       <h3>・データディクショナリ（データ項目一覧）</h3>
-    <DIV CLASS="message_info">
-        ※application.ymlの[DataDictionaryFilePath]で指定したファイルの内容を表示しています。最新ではないので注意。
-    </DIV>
-    <div th:utext="${dataTable}"></div>
-    
-    </FORM>
+<FORM NAME='DFORM' METHOD='GET' ACTION='DUMMY'>
+    <h3>・データディクショナリ（データ項目一覧）</h3>
+<DIV CLASS="message_info">
+    ※application.ymlの[DataDictionaryFilePath]で指定したファイルの内容を表示しています。最新ではないので注意。
+</DIV>
+<div th:utext="${dataTable}"></div>
+
+</FORM>
 </body>
 
 </html>

@@ -49,7 +49,7 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
         "データステータス区分＿コード"  to   true,
         "排他制御バージョン番号＿数"  to    true,
         "ビジネスタスクＩＤ＿英数カナ"  to   true,
-        "イベント発生タイムスタンプ＿日付"  to true,
+        //"イベント発生タイムスタンプ＿日付"  to true,
         "論理削除＿コード"  to         true,
         "データ登録タイムスタンプ＿日付"  to  true,
         "データ登録ユーザーＩＤ＿英数カナ"  to true,
@@ -117,15 +117,12 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
                 physicalColumnName = String.format("<BR><SPAN CLASS='PHYSICAL_COLUMN_NAME'>[%s]</SPAN>", d.L2P(column))
             }
             val functionColumnHeader = callback["H_"+column]
+            val domain = d.lookupDomain(column)
             if (functionColumnHeader!= null) {
                 html += "<TH>" + functionColumnHeader(column, "", result.columnList, null) + "</TH>"
-            } else if (column.indexOf("＿コード") != -1 || column.indexOf("_CD") != -1 ){
-                val domain = d.lookupDomain(column)
-                if (domain != "") {
-                    html += String.format("<TH><A HREF='/codeMasterEnquiry?domain=%s'>%s</A>%s</TH>",domain,column,physicalColumnName)
-                } else {
-                    html += String.format("<TH>%s%s</TH>",column,physicalColumnName)
-                }
+            } else if (domain != ""){  
+                //column.indexOf("＿コード") != -1 || column.indexOf("_CD") != -1 ){
+                html += String.format("<TH><A HREF='/codeMasterEnquiry?domain=%s'>%s</A>%s</TH>",domain,column,physicalColumnName)
             } else {
                 if ( DBSystemColumns[column] == true ) {
                     html += String.format("<TH CLASS='SYSTEM_COLUMN'>%s%s</TH>",column,physicalColumnName)
@@ -159,7 +156,8 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
                 }
 
                 //"＿コード"で終わる列名はコードマスタ対象データ項目とみなし、コード値名称を添えて表示
-                if ( column.indexOf("＿コード") != -1 )  {
+                if (d.lookupDomain(column) != ""){  
+                    //( column.indexOf("＿コード") != -1 )  {
                     val codeName = d.findCodeName(column, value1)
                     if (codeName != "") {
                         value1 = value1 + "<SPAN CLASS='CODE_NAME'>[" + codeName + "]</SPAN>"
@@ -170,7 +168,6 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
                 } else {
                     html += String.format("<TD>%s</TD>",value1)
                 }
-                
             }
             html += "</TR>\n"
         }
@@ -199,7 +196,6 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
         * inner classではなくネストクラスとすると、外側クラスとの関係性が薄いので外に切り出してもいいのではないか
         */  
         private var pkv = mutableMapOf<String,MutableList<Any?>>()
-
 
         /**
          * * 検索キー項目と検索値をセットする
@@ -234,8 +230,7 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
                 put(pk, values.getOrNull(i)) 
             }
         }
-        
-        
+
         override fun toString():String{
             return pkv.toString()
         }

@@ -38,13 +38,9 @@ class TeianList (var config: ConfigDef, var dic: Dictionary, var query: Database
 
         //callback
         var callback = mapOf(
-            "PREPEND" to fun(_:String?,_:String?,columns:List<String>?,values:Map<String,Any?>?):String{
-                //注意：　key と valがブランクになるのでvaluesからpolicyNumberを取得する
+            "PREPEND" to fun(_:String?,_:String?,_:List<String>?,values:Map<String,Any?>?):String{
                 var ankenNumber = values?.get("提案案件＿番号")
-                var ankenEdaban = values?.get("提案案件番号枝番＿番号")
-                var ankenRenzoku = values?.get("提案連続＿番号")
-                var ankenDataVersion = values?.get("提案設計データバージョン番号＿数")
-                return "<INPUT TYPE='checkbox'  NAME='ankenNumber' value='$ankenNumber-$ankenEdaban-$ankenRenzoku-$ankenDataVersion'>"            },
+                return "<INPUT TYPE='checkbox'  NAME='ankenNumber' value='$ankenNumber'>"            },
             "H_PREPEND" to fun(_:String?,_:String?,_:List<String>?,_:Map<String,Any?>?):String{
                 var html = "<INPUT TYPE='checkbox' onClick='toggleAllMsg(this, \"ankenNumber\");'>&nbsp;"
                 html += "<INPUT TYPE='submit' NAME='ACTN' VALUE='提案DB詳細' class='button' onClick='setActionToDataForm(\"/teianEnquiry\");'>"
@@ -54,11 +50,17 @@ class TeianList (var config: ConfigDef, var dic: Dictionary, var query: Database
                 return "<A HREF='/keiyakuEnquiry?policyNumber=" + value + "'>" + value + "</A>"
             },
             "提案案件＿番号" to fun(_:String?,_:String?,_:List<String>?,values:Map<String,Any?>?):String{
-                var ankenNumber = values?.get("提案案件＿番号")
-                var ankenEdaban = values?.get("提案案件番号枝番＿番号")
-                var ankenRenzoku = values?.get("提案連続＿番号")
-                var ankenDataVersion = values?.get("提案設計データバージョン番号＿数")
-                return "<A HREF='/teianEnquiry?ankenNumber=$ankenNumber-$ankenEdaban-$ankenRenzoku-$ankenDataVersion'>$ankenNumber-$ankenEdaban</A>"
+                //val list = listOf(values?.get("提案案件＿番号"),values?.get("提案案件番号枝番＿番号"),values?.get("提案連続＿番号"),values?.get("提案設計データバージョン番号＿数"))
+                //val ankenNumberEtc = list.filterNotNull().joinToString("-")
+                val ankenNumberEtc = values?.get("提案案件＿番号")
+                return "<A HREF='/teianEnquiry?ankenNumber=$ankenNumberEtc'>$ankenNumberEtc</A>"
+            },
+            "自動車保険契約種目フリート契約者＿コード" to fun(_:String?,value:String?,_:List<String>?,_:Map<String,Any?>?):String{
+                return if ( value != null ) { 
+                    "<A HREF='/fleetKeiyakushaEnquiry?fleetKeiyakushaCode=" + value + "'>" + value + "</A>"
+                } else {
+                    "NULL"
+                }
             },
             "団体＿コード" to fun(_:String?,value:String?,_:List<String>?,_:Map<String,Any?>?):String{
                 return if ( value != null ) { 

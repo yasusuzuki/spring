@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" th:content="${appName}">
+    <title th:text="${appName}"></title>
+    <link th:href="@{/css/Site.css}" rel="styleSheet">
+    <script type="text/javascript" th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+<DIV CLASS="header">環境：[[${@configDef.getCurrentEnvironment()}]] 現在時刻：[[${@configDef.currentDateTime()}]]</DIV>
+<h1>証券書類一覧</h1>
+
+<FORM NAME='QFORM' METHOD='GET' ACTION='/shokenShoruiList' >
+    <TABLE CLASS='QueryForm'>
+        <TR>
+            <TD>証券番号(*)：</TD>
+            <TD><input type="text" id="policyNumber" name="policyNumber" th:value="${req.policyNumber}"></TD>
+            <TD>冗長モード: </TD>
+            <TD><INPUT TYPE='CHECKBOX' ID='verboseMode' NAME='verboseMode' th:checked="${req.verboseMode}" ></TD>
+        </TR>
+        <TR>
+            <TD>イベント発生日付：</TD>
+            <TD>
+                <input type="date" id="processDateFrom" name="processDateFrom" th:value="${req.processDateFrom}">
+                ～
+                <input type="date" id="processDateTo" name="processDateTo" th:value="${req.processDateTo}">
+            </TD>
+
+            <TD>MAX:</TD>
+            <TD><input type="number" id="maxFetchRows" name="maxFetchRows" th:value="${req.maxFetchRows}"></TD>
+        </TR>
+    </TABLE>
+    <INPUT TYPE='SUBMIT' VALUE='GET' CLASS='getbutton'>
+</FORM>
+<HR SIZE=1 NOSHADE>
+<UL CLASS='MenuBar'>
+    <LI><A HREF='/keiyakuList' CLASS='button_face'>契約DB一覧</A></LI>
+    <LI><A HREF='/asyncTaskList' CLASS='button_face'>非同期ジョブ</A></LI>
+
+</UL>
+<FORM NAME='DFORM' METHOD='GET' ACTION='DUMMY'>
+    <h3>証券書類作成エンティティ</h3>
+    <DIV th:utext="${dataTable}"></DIV>
+</FORM>
+
+</body>
+</html>
+

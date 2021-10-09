@@ -15,9 +15,9 @@ class TestDictionary {
 		var conf = ConfigDef()
 		var dic = Dictionary(conf)
 		conf.dBConnections = listOf(mapOf("ENV" to "dummy env","DB_SERVER_PRODUCT" to "DB2"))
-		conf.dataDictionaryFilePath = ".\\data\\data_dictionary.csv"
+		conf.dataDictionaryFilePath = listOf(".\\data\\data_dictionary.csv")
 		conf.dBTableListFilePath = ".\\data\\db_tables.csv"
-		conf.codeMasterFilePath = ".\\data\\codemaster.csv"
+		conf.codeMasterFilePath = listOf(".\\data\\codemaster.csv")
 		conf.postConstruct()
 		dic.postConstruct() 
 		return dic
