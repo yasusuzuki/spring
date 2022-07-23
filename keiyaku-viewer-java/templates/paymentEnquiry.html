@@ -11,18 +11,16 @@
 
 <BODY>
 <DIV CLASS="header">環境：[[${@configDef.getCurrentEnvironment()}]] 現在時刻：[[${@configDef.currentDateTime()}]]</DIV>
-<H1> 契約DB詳細 </H1>
-<FORM NAME='QFORM' METHOD='GET' ACTION='/keiyakuEnquiry'>
+<H1> 収納手段DB詳細 </H1>
+<FORM NAME='QFORM' METHOD='GET' ACTION='/paymentEnquiry'>
     <TABLE  CLASS='QueryForm'>
         <TR>
-            <TD>証券番号：</TD>
-            <TD><INPUT TYPE="text" ID="policyNumber" NAME="policyNumber" th:value="${req.policyNumber}"></TD>
+            <TD>取引クレジットカード:</TD>
+            <TD><INPUT TYPE="text" ID="cardNumber" NAME="cardNumber" th:value="${req.cardNumber}"></TD>
+            <TD>取引金融機関口座：</TD>
+            <TD><INPUT TYPE="text" ID="accountNumber" NAME="accountNumber" th:value="${req.accountNumber}"></TD>
             <TD>冗長モード: </TD>
             <TD><INPUT TYPE='CHECKBOX' ID='verboseMode' NAME='verboseMode' th:checked="${req.verboseMode}" ></TD>
-            <TD>ブランク省略モード: </TD>
-            <TD><INPUT TYPE='CHECKBOX' ID='omitBlankFieldMode' NAME='omitBlankFieldMode' th:checked="${req.omitBlankFieldMode}" ></TD>
-            <TD>同値省略モード: </TD>
-            <TD><INPUT TYPE='CHECKBOX' ID='omitEqualFieldMode' NAME='omitEqualFieldMode' th:checked="${req.omitEqualFieldMode}" ></TD>
         </TR>
     </TABLE>
     <INPUT TYPE='SUBMIT' VALUE='GET' CLASS='getbutton'>
@@ -32,12 +30,6 @@
     <LI><A HREF='/keiyakuList' CLASS='button_face'>契約DB一覧</A></LI>
 </UL>
 <FORM NAME='DFORM' METHOD='GET' ACTION='DUMMY'>
-    <UL CLASS='MenuBar'>
-        <LI><A HREF='#保険契約' CLASS='InternalPageLink'>保険契約↓</A></LI>
-        <LI><A HREF='#保険契約種目' CLASS='InternalPageLink'>保険契約種目↓</A></LI>
-        <LI><A HREF='#保険契約明細'  CLASS='InternalPageLink'>保険契約明細↓</A></LI>
-        <LI><A HREF='#保険契約明細担保条件特約'  CLASS='InternalPageLink'>保険契約明細担保条件特約↓</A></LI>
-    </UL>
     <div th:each="item : ${dataTables}">
         <H3 th:id='${item.logicalTableName}' th:text="${item.logicalTableName}"></H3>
         <!--/* E0002 */-->
@@ -45,5 +37,4 @@
     </div>
 </FORM>
 </BODY>
-
 </HTML>

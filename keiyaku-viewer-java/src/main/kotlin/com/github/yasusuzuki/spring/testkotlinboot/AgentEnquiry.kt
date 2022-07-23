@@ -45,8 +45,8 @@ class AgentEnquiry(var dic: Dictionary, var query: DatabaseQuery){
                 criteria.putMultiple("代理店＿コード+代理店サブ＿コード",it,"-")
                 //代理店コードとサブコードを連結したものが組織グルーピング管理番号
                 criteria.put("組織グルーピング管理＿番号",it.replace("-","")) 
-            }
-        
+                    }
+                
 
         //callback
         var callback = hashMapOf(

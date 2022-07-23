@@ -15,7 +15,9 @@ class KeiyakuEnquiry(var config: ConfigDef,var dic: Dictionary,var query: Databa
     //policyNumberはリストで来る場合とそうでない場合があるが、SpringMVCがコンマ区切りのStringに変換してセットしてくれる
     data class Request(
         var policyNumber: String = "", //複数設定される場合は、コンマ区切りになる
-        var verboseMode: Boolean = false
+        var verboseMode: Boolean = false,
+        var omitBlankFieldMode: Boolean = false,
+        var omitEqualFieldMode: Boolean = false
     )
 
     @GetMapping("/keiyakuEnquiry" )
@@ -26,6 +28,26 @@ class KeiyakuEnquiry(var config: ConfigDef,var dic: Dictionary,var query: Databa
         var callback = mapOf(
             "VERBOSE_MODE_FLAG" to fun(_:String?,_:String?,_:List<String>?,_:Map<String,Any?>?):String{
                 return if (req.verboseMode) {"on"} else {"off"}
+            },
+            "OMIT_BLANK_FIELD_MODE" to fun(_:String?,_:String?,_:List<String>?,_:Map<String,Any?>?):String{
+                return if (req.omitBlankFieldMode) {"on"} else {"off"}
+            },
+            "OMIT_EQUAL_FIELD_MODE" to fun(_:String?,_:String?,_:List<String>?,_:Map<String,Any?>?):String{
+                return if (req.omitEqualFieldMode) {"on"} else {"off"}
+            },
+            "取引クレジットカード＿番号" to fun(_:String?,value:String?,_:List<String>?,_:Map<String,Any?>?):String{
+                return if ( value != null ) { 
+                    "<A HREF='/paymentEnquiry?cardNumber=" + value + "'>" + value + "</A>"
+                } else {
+                    "NULL"
+                }
+            },
+            "取引金融機関口座＿番号" to fun(_:String?,value:String?,_:List<String>?,_:Map<String,Any?>?):String{
+                return if ( value != null ) { 
+                    "<A HREF='/paymentEnquiry?accountNumber=" + value + "'>" + value + "</A>"
+                } else {
+                    "NULL"
+                }
             },
         )
         data class TableResultPair(

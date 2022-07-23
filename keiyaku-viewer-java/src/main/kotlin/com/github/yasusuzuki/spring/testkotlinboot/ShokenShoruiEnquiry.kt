@@ -59,7 +59,7 @@ class ShokenShoruiEnquiry(var config: ConfigDef, var dic: Dictionary,var db:Data
                 //この画面は削除機能を含むので、あいまい検索は許容しない。
                 //4つの検索条件がすべて設定されているか正規表現で確認する
                 //TODO:条件を満たしていない場合にエラーログを吐く。
-                .filter { "[A-Z0-9 ]+--[0-9 ]+-[0-9 ]".toRegex().matches(it) }
+                .filter { "[A-Z0-9 ]+- *-[0-9]+-[0-9]+".toRegex().matches(it) }
                 .map { criteria.putMultiple("証券＿番号+証券番号枝番＿番号+契約計上枝番＿番号+証券書類作成種類＿コード",it,"-") }
 
         model["dataTables"] = selectDBRecord(req,criteria)

@@ -18,7 +18,9 @@ class TeianEnquiry(var dic: Dictionary, var query: DatabaseQuery) {
     data class Request(
         var ankenNumber: String = "", //複数設定される場合は、コンマ区切りになる
         var latestDataVersion: Boolean = false,
-        var verboseMode: Boolean = false
+        var verboseMode: Boolean = false,
+        var omitBlankFieldMode: Boolean = false,
+        var omitEqualFieldMode: Boolean = false        
     )
     data class TableResultPair(
         var logicalTableName: String = "",
@@ -51,12 +53,36 @@ class TeianEnquiry(var dic: Dictionary, var query: DatabaseQuery) {
         req.ankenNumber
             .split(",")
             .map { it.trim() }
-            .map { criteria.putMultiple("提案案件＿番号+提案案件番号枝番＿番号+提案連続＿番号+提案設計データバージョン番号＿数",it,"-") }
+            // 提案案件＿番号 の最後の3桁を64で割った余り＋１を　"契約管理区分キー＿英数カナ"
+            .map { var x = "" + it.split('-').getOrElse(0) {'%'}; 
+                    log.info("契約管理区分キー＿英数カナ" + x.substring(x.length-3).toInt().mod(64).toString().padStart(3,'0'))
+                   x.substring(x.length-3).toInt().mod(64).plus(1).toString().padStart(3,'0') + '-' + it }
+            .map { criteria.putMultiple("契約管理区分キー＿英数カナ+提案案件＿番号+提案案件番号枝番＿番号+提案連続＿番号+提案設計データバージョン番号＿数",it,"-") }
 
         //callback
         var callback = mapOf(
             "VERBOSE_MODE_FLAG" to fun(_:String?,_:String?,_:List<String>?,_:Map<String,Any?>?):String{
                 return if (req.verboseMode) {"on"} else {"off"}
+            },
+            "OMIT_BLANK_FIELD_MODE" to fun(_:String?,_:String?,_:List<String>?,_:Map<String,Any?>?):String{
+                return if (req.omitBlankFieldMode) {"on"} else {"off"}
+            },
+            "OMIT_EQUAL_FIELD_MODE" to fun(_:String?,_:String?,_:List<String>?,_:Map<String,Any?>?):String{
+                return if (req.omitEqualFieldMode) {"on"} else {"off"}
+            },
+            "取引クレジットカード＿番号" to fun(_:String?,value:String?,_:List<String>?,_:Map<String,Any?>?):String{
+                return if ( value != null ) { 
+                    "<A HREF='/paymentEnquiry?cardNumber=" + value + "'>" + value + "</A>"
+                } else {
+                    "NULL"
+                }
+            },
+            "取引金融機関口座＿番号" to fun(_:String?,value:String?,_:List<String>?,_:Map<String,Any?>?):String{
+                return if ( value != null ) { 
+                    "<A HREF='/paymentEnquiry?accountNumber=" + value + "'>" + value + "</A>"
+                } else {
+                    "NULL"
+                }
             },
         )
 

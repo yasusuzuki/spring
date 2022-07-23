@@ -50,6 +50,7 @@ class AsyncTaskList(var config: ConfigDef, var dic: Dictionary,var db:Database, 
         }
         if ( req.hideManualEntry ){
             sql1 += " AND DTA_RGT_PRC_KN not like '%AsyncTestSupport%' "
+            sql1 += " AND DTA_RGT_PRC_KN not like '%RETRY%' "
         }
         sql1 += " ORDER BY PRC_DT DESC "
         sql1 += " FETCH FIRST ${req.maxFetchRows} ROWS ONLY "
@@ -137,15 +138,15 @@ class AsyncTaskList(var config: ConfigDef, var dic: Dictionary,var db:Database, 
         |  1 AS SYS_ERR_PRC_PTN,
         |  1 AS FST_CAL_FLG,
         |  '' AS LGC_DEL_CD,
-        |  T.DTA_RGT_TS  AS DTA_RGT_TS,
+        |  T.DTA_RGT_TS AS DTA_RGT_TS,
         |  'RETRY' AS DTA_RGT_USR_ID,
         |  0 AS DTA_RGT_PRC_KN,
-        |  T.DTA_UPD_TS, 
+        |  T.DTA_UPD_TS AS DTA_UPD_TS,
         |  'RETRY'  AS DTA_UPD_USR_ID, 
         |  0 AS DTA_UPD_PRC_KN,
         |  1 AS VER_NO,
         |  CAST(NULL AS CHAR)  AS BNT_IDA_EK, 
-        |  CAST(NULL AS CHAR)  AS EVN_IDN_TMS_DA
+        |  CAST(NULL AS TIMESTAMP)  AS EVN_IDN_TMS_DA
         | FROM TASK_MANAGEMENT T WHERE BNT_ID = '${businessTaskId}'
         """.trimMargin()
         val con = db.getConnection(config.getCurrentEnvironment())

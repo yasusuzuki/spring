@@ -69,6 +69,30 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
         return buildHTML(result,sql,callback)
     }
 
+    fun omitBlankFields(result: Database.SQLResultSet) {
+        var newColumnList = arrayListOf<String>()
+        for (column in result.columnList) {
+            if ( ! result.recordList.all { it[column] == null || it[column].toString().isBlank()  } ){
+                newColumnList += column
+            }
+        }
+        result.columnList = newColumnList
+    }
+
+    fun omitEqualFields(result: Database.SQLResultSet) {
+        //レコードが1行または0行の場合は、同値がある項目を判定できないので、全項目表示する
+        println( " record size ========= " + result.recordList.size)
+        if ( result.recordList.size <= 1 ) {
+            return 
+        }
+        var newColumnList = arrayListOf<String>()
+        for (column in result.columnList) {
+            if ( ! result.recordList.all { it[column] == result.recordList.firstOrNull()?.get(column) } ){
+                newColumnList += column
+            }
+        }
+        result.columnList = newColumnList
+    }
  
     fun  buildHTML(result: Database.SQLResultSet,
                    sql: String, 
@@ -84,6 +108,13 @@ class DatabaseQuery(var db : Database,var d : Dictionary,var config: ConfigDef) 
         }
         if  ( callback["HIDE_DB_SYSTEM_COLUMNS_FLAG"]?.let{ it("", "", null,null) } == "off") {
             hideDBSystemColumns = false
+        }
+        
+        if ( callback["OMIT_BLANK_FIELD_MODE"]?.let{ it("", "", null,null) } == "on" ) {
+            omitBlankFields(result)
+        }
+        if ( callback["OMIT_EQUAL_FIELD_MODE"]?.let{ it("", "", null,null) } == "on" ) {
+            omitEqualFields(result)
         }
         if (displaySQL) {
             html += String.format("<PRE>%s</PRE>", sql)

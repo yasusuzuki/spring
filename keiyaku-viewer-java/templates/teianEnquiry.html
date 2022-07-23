@@ -19,6 +19,10 @@
             <TD><INPUT TYPE="text" ID="ankenNumber" NAME="ankenNumber" th:value="${req.ankenNumber}"></TD>
             <TD>冗長モード: </TD>
             <TD><INPUT TYPE='CHECKBOX' ID='verboseMode' NAME='verboseMode' th:checked="${req.verboseMode}" ></TD>
+            <TD>ブランク省略モード: </TD>
+            <TD><INPUT TYPE='CHECKBOX' ID='omitBlankFieldMode' NAME='omitBlankFieldMode' th:checked="${req.omitBlankFieldMode}" ></TD>
+            <TD>同値省略モード: </TD>
+            <TD><INPUT TYPE='CHECKBOX' ID='omitEqualFieldMode' NAME='omitEqualFieldMode' th:checked="${req.omitEqualFieldMode}" ></TD>
         </TR>
     </TABLE>
     <INPUT TYPE='SUBMIT' VALUE='GET' CLASS='getbutton'>
